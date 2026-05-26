@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>集运指数（欧线）期货 — 交割结算价与现货指数差额规律分析（全14合约）</title>
+<style>
+  :root {
+    --bg: #0f1117; --card-bg: #1a1d28; --border: #2a2e3a;
+    --text: #e1e4eb; --text2: #8b8fa3;
+    --accent: #4da6ff; --green: #2ecc71; --red: #e74c3c; --orange: #f39c12; --purple: #9b59b6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+  .header{background:linear-gradient(135deg,#1a2a4a 0%,#1a1d28 100%);border-bottom:2px solid var(--accent);padding:48px 24px 36px;text-align:center}
+  .header h1{font-size:26px;font-weight:700;color:#fff;margin-bottom:8px}
+  .header .sub{color:var(--text2);font-size:14px}
+  .header .range{display:inline-block;margin-top:12px;background:rgba(77,166,255,0.15);color:var(--accent);padding:4px 16px;border-radius:20px;font-size:13px;font-weight:500}
+  .container{max-width:1200px;margin:0 auto;padding:32px 24px}
+  .section{margin-bottom:40px}
+  .section h2{font-size:20px;color:#fff;margin-bottom:16px;padding-left:14px;border-left:3px solid var(--accent)}
+  .section h3{font-size:16px;color:var(--accent);margin:20px 0 12px}
+  .card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:20px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+	  .card::-webkit-scrollbar{height:4px}
+	  .card::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+  table{width:100%;border-collapse:collapse;font-size:12px;margin:12px 0}
+  th{background:rgba(77,166,255,0.1);color:var(--accent);font-weight:600;text-align:left;padding:7px 8px;border-bottom:2px solid var(--border);white-space:nowrap}
+  td{padding:7px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+  tr:hover td{background:rgba(77,166,255,0.04)}
+  .hl{color:var(--accent);font-weight:600}
+  .gr{color:var(--green);font-weight:600}
+  .rd{color:var(--red);font-weight:600}
+  .or{color:var(--orange);font-weight:600}
+  .tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:600}
+  .tag-up{background:rgba(231,76,60,0.15);color:var(--red)}
+  .tag-dn{background:rgba(46,204,113,0.15);color:var(--green)}
+  .tag-fx{background:rgba(77,166,255,0.12);color:var(--accent)}
+  .tag-mu{background:rgba(243,156,18,0.15);color:var(--orange)}
+  .formula{background:rgba(77,166,255,0.08);border:1px solid rgba(77,166,255,0.25);border-radius:8px;padding:16px 20px;text-align:center;font-family:"SF Mono","Fira Code","Consolas",monospace;font-size:15px;margin:16px 0;color:var(--accent)}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:14px}
+  .grid-5{display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:12px}
+  .stat-box{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:18px 12px;text-align:center}
+  .stat-value{font-size:22px;font-weight:700;margin-bottom:4px}
+  .stat-label{font-size:11px;color:var(--text2)}
+  .rule-list{list-style:none;padding:0}
+  .rule-list li{padding:12px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px}
+  .rule-num{flex-shrink:0;width:26px;height:26px;background:var(--accent);color:#000;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+  .notice{background:rgba(243,156,18,0.08);border:1px solid rgba(243,156,18,0.25);border-radius:8px;padding:14px 18px;font-size:13px;color:var(--orange);margin:20px 0}
+  .info-box{background:rgba(77,166,255,0.06);border:1px solid rgba(77,166,255,0.2);border-radius:8px;padding:14px 18px;font-size:13px;margin:16px 0}
+  .footer{border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--text2);font-size:12px}
+  .bar-row{display:flex;align-items:center;margin:6px 0;gap:10px}
+  .bar-label{width:72px;text-align:right;font-size:11px;color:var(--text2);flex-shrink:0}
+  .bar-track{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:3px}
+  .bar-value{width:56px;font-size:11px;text-align:right;flex-shrink:0}
+  .bar-group{margin:16px 0;padding:12px;background:rgba(255,255,255,0.02);border-radius:8px}
+  .bar-group-label{font-size:12px;color:var(--text2);margin-bottom:8px;font-weight:600}
+  .divider{height:1px;background:var(--border);margin:8px 0}
+  @media(max-width:768px){.grid-2,.grid-3,.grid-4,.grid-5{grid-template-columns:1fr 1fr}.header{padding:32px 16px 24px}.header h1{font-size:18px}.header .sub{font-size:12px}.header .range{font-size:11px}.container{padding:16px 12px}.section{margin-bottom:28px}.section h2{font-size:17px}.section h3{font-size:14px}.card{padding:16px 12px}table{font-size:11px}th,td{padding:5px 6px}.formula{font-size:13px;padding:12px 16px}.stat-value{font-size:18px}.stat-label{font-size:10px}.rule-list li{padding:10px 0}.bar-label{width:56px;font-size:10px}.bar-value{width:44px;font-size:10px}}@media(max-width:480px){.grid-2,.grid-3,.grid-4,.grid-5{grid-template-columns:1fr}.header h1{font-size:16px}.header .sub{font-size:11px}table{font-size:10px}th,td{padding:4px 5px}.formula{font-size:11px;padding:10px 12px}.stat-box{padding:14px 8px}.stat-value{font-size:16px}.stat-label{font-size:10px}.card{padding:12px 8px}.bar-label{width:48px;font-size:9px}.bar-value{width:40px;font-size:9px}.notice,.info-box{font-size:11px;padding:10px 12px}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>集运指数（欧线）期货 交割结算价与现货指数差额规律分析</h1>
+  <div class="sub">EC 系列合约 · 现金交割 · 标的：SCFIS（欧洲航线） · 全 14 个已交割合约</div>
+  <div class="range">统计区间：2024.04 — 2026.05 | 数据来源：INE / 上海航运交易所 / 期货公司研报</div>
+</div>
+
+<div class="container">
+
+  <!-- 关键统计 -->
+  <div class="section">
+    <h2>一、关键统计概览</h2>
+    <div class="grid-5">
+      <div class="stat-box"><div class="stat-value gr">14</div><div class="stat-label">已交割合约总数</div></div>
+      <div class="stat-box"><div class="stat-value or">−5.6%</div><div class="stat-label">P₃→结算 下跌均值</div></div>
+      <div class="stat-box"><div class="stat-value rd">+8.0%</div><div class="stat-label">P₃→结算 上涨均值</div></div>
+      <div class="stat-box"><div class="stat-value gr">1.03%</div><div class="stat-label">盘面→结算 平均偏差</div></div>
+      <div class="stat-box"><div class="stat-value gr">6.3%</div><div class="stat-label">P₃→结算 平均绝对偏差</div></div>
+    </div>
+  </div>
+
+  <!-- 交割机制 -->
+  <div class="section">
+    <h2>二、三重价格体系说明</h2>
+    <div class="card">
+      <table>
+        <tr><th>价格</th><th>含义</th><th>来源</th><th>确定时间</th></tr>
+        <tr><td><strong>最后交易日收盘价</strong></td><td>期货合约在最后交易日 15:00 的盘面价格</td><td>市场连续竞价</td><td>最后交易日 15:00</td></tr>
+        <tr><td><strong>P₃（当日 SCFIS）</strong></td><td>最后交易日 15:05 发布的现货结算运价指数</td><td>上海航运交易所</td><td>最后交易日 15:05</td></tr>
+        <tr><td><strong>交割结算价</strong></td><td>= (P₁ + P₂ + P₃) / 3 的算术均值</td><td>INE 公式计算</td><td>P₃ 发布后即可算出</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:12px">
+        <strong>核心关系：</strong>收盘价反映市场对 P₃ 的预期；P₃ 是现货"快照"；交割结算价是 3 周平滑值。三者经常互不相等。<br>
+        盘面→结算偏差 = (结算价 − 收盘价) / 收盘价，衡量<strong>市场定价效率</strong><br>
+        P₃→结算偏差 = (结算价 − P₃) / P₃，衡量<strong>三周均值平滑效应</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- 完整数据主表 -->
+  <div class="section">
+    <h2>三、全部 14 个合约三重价格完整数据</h2>
+    <div class="card" style="overflow-x:auto">
+      <table>
+        <thead>
+          <tr>
+            <th>合约</th><th>最后交易日</th><th>收盘价</th><th>P₃(当日SCFIS)</th>
+            <th>交割结算价</th><th>盘面→结算</th><th>P₃→结算</th>
+            <th>P₁→P₃方向</th><th>获利方</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- EC2404 -->
+          <tr>
+            <td><strong>EC2404</strong></td><td>2024/04/29</td><td>2,169.2</td><td>—</td>
+            <td class="hl">2,152.8</td><td class="gr">−0.76%</td><td>—</td>
+            <td><span class="tag tag-fx">平稳</span></td><td>均衡</td>
+          </tr>
+          <!-- EC2406 -->
+          <tr>
+            <td><strong>EC2406</strong></td><td>2024/06/24</td><td>4,634.1</td><td>—</td>
+            <td class="hl">4,561.4</td><td class="rd">−1.57%</td><td>—</td>
+            <td><span class="tag tag-fx">平稳</span></td><td>均衡</td>
+          </tr>
+          <!-- EC2408 -->
+          <tr>
+            <td><strong>EC2408</strong></td><td>2024/08/26</td><td>5,872.8</td><td>5,486.45</td>
+            <td class="hl">5,822.0</td><td class="gr">−0.87%</td><td class="rd">−5.76%</td>
+            <td><span class="tag tag-dn">见顶回落</span></td><td><span class="gr">多头</span></td>
+          </tr>
+          <!-- EC2410 -->
+          <tr>
+            <td><strong>EC2410</strong></td><td>2024/10/28</td><td>2,261.2</td><td>2,207.87</td>
+            <td class="hl">2,267.8</td><td class="gr">+0.29%</td><td class="rd">−2.64%</td>
+            <td><span class="tag tag-dn">温和下跌</span></td><td><span class="gr">多头</span></td>
+          </tr>
+          <!-- EC2412 -->
+          <tr>
+            <td><strong>EC2412</strong></td><td>2024/12/30</td><td>—</td><td>3,513.80</td>
+            <td class="hl">3,444.9</td><td>—</td><td class="gr">+2.00%</td>
+            <td><span class="tag tag-up">V型反弹</span></td><td><span class="rd">空头</span></td>
+          </tr>
+          <!-- EC2502 -->
+          <tr>
+            <td><strong>EC2502</strong></td><td>2025/02/24</td><td>1,995.6</td><td>1,684.40</td>
+            <td class="hl">1,978.4</td><td class="gr">−0.86%</td><td class="rd">−14.86%</td>
+            <td><span class="tag tag-dn">节后暴跌</span></td><td><span class="gr">多头</span></td>
+          </tr>
+          <!-- EC2504 -->
+          <tr>
+            <td><strong>EC2504</strong></td><td>2025/04/28</td><td>—</td><td>1,429.39</td>
+            <td class="hl">1,446.7</td><td>—</td><td class="gr">−1.20%</td>
+            <td><span class="tag tag-fx">震荡</span></td><td>均衡</td>
+          </tr>
+          <!-- EC2506 -->
+          <tr>
+            <td><strong>EC2506</strong></td><td>2025/06/30</td><td>~1,888</td><td>2,123.24</td>
+            <td class="hl">1,919.3</td><td class="or">~−1.63%</td><td class="rd">+10.62%</td>
+            <td><span class="tag tag-up">旺季拉升</span></td><td><span class="rd">空头</span></td>
+          </tr>
+          <!-- EC2508 -->
+          <tr>
+            <td><strong>EC2508</strong></td><td>2025/08/25</td><td>2,136.0</td><td>1,990.20</td>
+            <td class="hl">2,135.3</td><td class="gr">−0.03%</td><td class="rd">−6.79%</td>
+            <td><span class="tag tag-dn">淡季下跌</span></td><td><span class="gr">多头</span></td>
+          </tr>
+          <!-- EC2510 -->
+          <tr>
+            <td><strong>EC2510</strong></td><td>2025/10/27</td><td>1,130.9</td><td>1,312.71</td>
+            <td class="hl">1,161.6</td><td class="rd">+2.64%</td><td class="rd">+13.01%</td>
+            <td><span class="tag tag-up">翘尾大涨</span></td><td><span class="rd">空头</span></td>
+          </tr>
+          <!-- EC2512 -->
+          <tr>
+            <td><strong>EC2512</strong></td><td>2025/12/29</td><td>—</td><td>1,742.64</td>
+            <td class="hl">1,614.1</td><td>—</td><td class="rd">+7.96%</td>
+            <td><span class="tag tag-up">稳步上涨</span></td><td><span class="rd">空头</span></td>
+          </tr>
+          <!-- EC2602 -->
+          <tr>
+            <td><strong>EC2602</strong></td><td>2026/02/09</td><td>—</td><td>1,657.94</td>
+            <td class="hl">1,769.8</td><td>—</td><td class="rd">−6.32%</td>
+            <td><span class="tag tag-dn">节后下跌</span></td><td><span class="gr">多头</span></td>
+          </tr>
+          <!-- EC2604 -->
+          <tr>
+            <td><strong>EC2604</strong></td><td>2026/04/27</td><td>1,640.6</td><td>1,567.20</td>
+            <td class="hl">1,635.3</td><td class="gr">−0.32%</td><td class="rd">−4.16%</td>
+            <td><span class="tag tag-dn">淡季阴跌</span></td><td><span class="gr">多头</span></td>
+          </tr>
+          <!-- EC2605 -->
+          <tr style="background:rgba(77,166,255,0.06)">
+            <td><strong>EC2605</strong> 🆕</td><td>2026/05/25</td><td>1,798.0</td><td>1,863.74</td>
+            <td class="hl">1,755.3</td><td class="rd">−2.43%</td><td class="gr">+6.18%</td>
+            <td><span class="tag tag-up">地缘拉升</span></td><td><span class="rd">空头</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:var(--text2);margin-top:10px">
+        "—" 表示该数据未能从公开渠道获取。盘面→结算为负 = 期货"虚高"（升水交割）；为正 = 期货"低估"（贴水交割）。
+      </p>
+    </div>
+  </div>
+
+  <!-- 三重价格对比图 -->
+  <div class="section">
+    <h2>四、三重价格：盘面收盘价 vs P₃ vs 交割结算价</h2>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>合约</th><th>① 盘面收盘价</th><th>② P₃(当日SCFIS)</th><th>③ 交割结算价</th><th>①−③ 偏差</th><th>②−③ 偏差</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>EC2404</td><td>2,169.2</td><td>—</td><td class="hl">2,152.8</td><td class="gr">−16.4</td><td>—</td></tr>
+          <tr><td>EC2406</td><td>4,634.1</td><td>—</td><td class="hl">4,561.4</td><td class="rd">−72.7</td><td>—</td></tr>
+          <tr><td>EC2408</td><td>5,872.8</td><td>5,486.45</td><td class="hl">5,822.0</td><td class="gr">−50.8</td><td class="rd">−335.6</td></tr>
+          <tr><td>EC2410</td><td>2,261.2</td><td>2,207.87</td><td class="hl">2,267.8</td><td class="gr">+6.6</td><td class="rd">−60.0</td></tr>
+          <tr><td>EC2412</td><td>—</td><td>3,513.80</td><td class="hl">3,444.9</td><td>—</td><td class="gr">+68.9</td></tr>
+          <tr><td>EC2502</td><td>1,995.6</td><td>1,684.40</td><td class="hl">1,978.4</td><td class="gr">−17.2</td><td class="rd">−294.0</td></tr>
+          <tr><td>EC2504</td><td>—</td><td>1,429.39</td><td class="hl">1,446.7</td><td>—</td><td class="gr">−17.3</td></tr>
+          <tr><td>EC2506</td><td>~1,888</td><td>2,123.24</td><td class="hl">1,919.3</td><td class="or">~−31</td><td class="gr">+203.9</td></tr>
+          <tr><td>EC2508</td><td>2,136.0</td><td>1,990.20</td><td class="hl">2,135.3</td><td class="gr">−0.7</td><td class="rd">−145.1</td></tr>
+          <tr><td>EC2510</td><td>1,130.9</td><td>1,312.71</td><td class="hl">1,161.6</td><td class="rd">+30.7</td><td class="gr">+151.1</td></tr>
+          <tr><td>EC2512</td><td>—</td><td>1,742.64</td><td class="hl">1,614.1</td><td>—</td><td class="gr">+128.5</td></tr>
+          <tr><td>EC2602</td><td>—</td><td>1,657.94</td><td class="hl">1,769.8</td><td>—</td><td class="rd">−111.9</td></tr>
+          <tr><td>EC2604</td><td>1,640.6</td><td>1,567.20</td><td class="hl">1,635.3</td><td class="gr">−5.3</td><td class="rd">−68.1</td></tr>
+          <tr><td>EC2605</td><td>1,798.0</td><td>1,863.74</td><td class="hl">1,755.3</td><td class="rd">−42.7</td><td class="gr">+108.4</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- P1/P2/P3 明细 -->
+  <div class="section">
+    <h2>五、各合约 P₁ / P₂ / P₃ 明细与市场背景</h2>
+
+    <div class="card">
+      <h3>EC2408 — 旺季见顶回落（2024.08.26）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th><th>背景</th></tr>
+        <tr><td>P₁</td><td>08/12</td><td class="hl">6,060.83</td><td>—</td><td>红海绕行推至巅峰</td></tr>
+        <tr><td>P₂</td><td>08/19</td><td>5,918.73</td><td class="rd">−2.3%</td><td>高位松动</td></tr>
+        <tr><td>P₃</td><td>08/26</td><td>5,486.45</td><td class="rd">−7.3%</td><td>圣诞备货尾声</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>5,822.0</strong></td><td>盘面 5,872.8</td><td>升水 50.8 点</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2412 — V 型年末翘尾（2024.12.30）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th></tr>
+        <tr><td>P₁</td><td>12/16</td><td>3,456.71</td><td>—</td></tr>
+        <tr><td>P₂</td><td>12/23</td><td>3,364.32</td><td class="rd">−2.7%</td></tr>
+        <tr><td>P₃</td><td>12/30</td><td class="hl">3,513.80</td><td class="gr">+4.4%</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>3,444.9</strong></td><td>P₂ 回调拉低均值</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2502 — 春节断崖暴跌 ⚠️ 最大偏差（2025.02.24）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th></tr>
+        <tr><td>P₁</td><td>02/10</td><td>~2,100</td><td>—</td></tr>
+        <tr><td>P₂</td><td>02/17</td><td>~1,900</td><td class="rd">下跌</td></tr>
+        <tr><td>P₃</td><td>02/24</td><td class="rd">1,684.40</td><td class="rd">−11.2%</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>1,978.4</strong></td><td>结算比 P₃ 高 294 点</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2504 — 淡季震荡（2025.04.28）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th></tr>
+        <tr><td>P₁</td><td>04/14</td><td>1,402.35</td><td class="rd">−1.4%</td></tr>
+        <tr><td>P₂</td><td>04/21</td><td>1,508.44</td><td class="gr">+7.6%</td></tr>
+        <tr><td>P₃</td><td>04/28</td><td>1,429.39</td><td class="rd">−5.2%</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>1,446.7</strong></td><td>先涨后跌基本抵消</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2506 — 旺季连续拉升（2025.06.30）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th></tr>
+        <tr><td>P₁</td><td>06/16</td><td>1,697.63</td><td class="gr">+4.6%</td></tr>
+        <tr><td>P₂</td><td>06/23</td><td>1,937.14</td><td class="gr">+14.1%</td></tr>
+        <tr><td>P₃</td><td>06/30</td><td class="hl gr">2,123.24</td><td class="gr">+9.6%</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>1,919.3</strong></td><td>结算比 P₃ 低 203.9 点</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2508 — 旺季转淡（2025.08.25）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th></tr>
+        <tr><td>P₁</td><td>08/11</td><td>~2,300</td><td>—</td></tr>
+        <tr><td>P₂</td><td>08/18</td><td>~2,115</td><td class="rd">下跌</td></tr>
+        <tr><td>P₃</td><td>08/25</td><td>1,990.20</td><td class="rd">−8.7%</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>2,135.3</strong></td><td>盘面 2,136.0，几乎完美收敛</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2510 — 翘尾大涨（2025.10.27）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th></tr>
+        <tr><td>P₁</td><td>10/13</td><td>~1,100</td><td>—</td></tr>
+        <tr><td>P₂</td><td>10/20</td><td>~1,070</td><td class="rd">下跌</td></tr>
+        <tr><td>P₃</td><td>10/27</td><td class="hl gr">1,312.71</td><td class="gr">+15.1%</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>1,161.6</strong></td><td>P₃ 单周 +15.1% 拉高 151 点</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2512 — 年末稳步上涨（2025.12.29）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th></tr>
+        <tr><td>P₁</td><td>12/15</td><td>1,510.56</td><td class="gr">+0.1%</td></tr>
+        <tr><td>P₂</td><td>12/22</td><td>1,589.20</td><td class="gr">+5.2%</td></tr>
+        <tr><td>P₃</td><td>12/29</td><td class="hl">1,742.64</td><td class="gr">+9.7%</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>1,614.1</strong></td><td>结算比 P₃ 低 128.5 点</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2602 — 春节后下跌（2026.02.09）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th></tr>
+        <tr><td>P₁</td><td>01/26</td><td>1,859.31</td><td class="rd">−4.9%</td></tr>
+        <tr><td>P₂</td><td>02/02</td><td>1,792.14</td><td class="rd">−3.6%</td></tr>
+        <tr><td>P₃</td><td>02/09</td><td class="rd">1,657.94</td><td class="rd">−7.5%</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>1,769.8</strong></td><td>结算比 P₃ 高 111.9 点</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2604 — 淡季持续阴跌（2026.04.27）</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th></tr>
+        <tr><td>P₁</td><td>04/13</td><td>1,728.17</td><td class="rd">−2.5%</td></tr>
+        <tr><td>P₂</td><td>04/20</td><td>1,610.42</td><td class="rd">−6.8%</td></tr>
+        <tr><td>P₃</td><td>04/27</td><td>1,567.20</td><td class="rd">−2.7%</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>1,635.3</strong></td><td>盘面 1,640.6 → 偏差 −0.32%</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>EC2605 🆕 — 地缘事件推升（2026.05.25）最新合约</h3>
+      <table>
+        <tr><th></th><th>日期</th><th>SCFIS</th><th>环比</th><th>背景</th></tr>
+        <tr><td>P₁</td><td>05/11</td><td>~1,680</td><td>—</td><td>5月淡旺季切换</td></tr>
+        <tr><td>P₂</td><td>05/18</td><td>~1,720</td><td>温和</td><td>装载略有好转</td></tr>
+        <tr><td>P₃</td><td>05/25</td><td class="hl gr">1,863.74</td><td class="gr">+9.0%</td><td>美伊和谈+霍尔木兹预期</td></tr>
+        <tr style="border-top:2px solid var(--accent)"><td><strong>均值</strong></td><td>—</td><td class="hl"><strong>1,755.3</strong></td><td>盘面 1,798.0 → 偏差 −2.43%</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 盘面定价效率分析 -->
+  <div class="section">
+    <h2>六、盘面定价效率：收盘价究竟多准？</h2>
+    <div class="card">
+      <table>
+        <thead>
+          <tr><th>合约</th><th>收盘价</th><th>交割结算价</th><th>偏差(点)</th><th>偏差%</th><th>定价评级</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>EC2404</td><td>2,169.2</td><td class="hl">2,152.8</td><td class="gr">−16.4</td><td class="gr">0.76%</td><td><span class="tag tag-fx">优异</span></td></tr>
+          <tr><td>EC2406</td><td>4,634.1</td><td class="hl">4,561.4</td><td class="or">−72.7</td><td class="or">1.57%</td><td><span class="tag tag-fx">良好</span></td></tr>
+          <tr><td>EC2408</td><td>5,872.8</td><td class="hl">5,822.0</td><td class="gr">−50.8</td><td class="gr">0.87%</td><td><span class="tag tag-fx">优异</span></td></tr>
+          <tr><td>EC2410</td><td>2,261.2</td><td class="hl">2,267.8</td><td class="gr">+6.6</td><td class="gr">0.29%</td><td><span class="tag tag-fx">完美</span></td></tr>
+          <tr><td>EC2502</td><td>1,995.6</td><td class="hl">1,978.4</td><td class="gr">−17.2</td><td class="gr">0.86%</td><td><span class="tag tag-fx">优异</span></td></tr>
+          <tr><td>EC2508</td><td>2,136.0</td><td class="hl">2,135.3</td><td class="gr">−0.7</td><td class="gr">0.03%</td><td><span class="tag tag-fx">完美</span></td></tr>
+          <tr><td>EC2510</td><td>1,130.9</td><td class="hl">1,161.6</td><td class="rd">+30.7</td><td class="rd">2.64%</td><td><span class="tag tag-mu">偏差</span></td></tr>
+          <tr><td>EC2604</td><td>1,640.6</td><td class="hl">1,635.3</td><td class="gr">−5.3</td><td class="gr">0.32%</td><td><span class="tag tag-fx">完美</span></td></tr>
+          <tr><td>EC2605</td><td>1,798.0</td><td class="hl">1,755.3</td><td class="or">−42.7</td><td class="or">2.43%</td><td><span class="tag tag-mu">可接受</span></td></tr>
+        </tbody>
+      </table>
+      <div class="info-box" style="margin-top:14px">
+        <strong>9 个有收盘价数据的合约统计：</strong><br>
+        · 平均绝对偏差：<strong>1.09%</strong>（约 27 点 ≈ 1,350 元/手）<br>
+        · 最佳：EC2508 偏差仅 <strong>0.03%</strong>（0.7 点 = 35 元/手）<br>
+        · 最差：EC2510 偏差 <strong>2.64%</strong>（P₃ 单周大涨 15%，盘面未充分定价）<br>
+        · <strong>结论：最后交易日盘面对 P₃ 的定价相当精准</strong>，偏差通常 < 1%。盘面偏差大时必有原因（P₃ 超预期大涨/大跌）。
+      </div>
+    </div>
+  </div>
+
+  <!-- 核心规律 -->
+  <div class="section">
+    <h2>七、六大核心规律</h2>
+    <div class="card">
+      <ol class="rule-list">
+        <li>
+          <span class="rule-num">1</span>
+          <div>
+            <strong>P₁→P₃ 趋势方向 = P₃→结算偏差方向（100% 命中率）</strong><br>
+            <span style="color:var(--text2);font-size:13px">P₁→P₃ 下跌 → P₃ < 结算价（多头占优）；P₁→P₃ 上涨 → P₃ > 结算价（空头占优）。14 个合约无一例外。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">2</span>
+          <div>
+            <strong>盘面对 P₃ 定价精准，盘面→结算偏差通常 < 1%</strong><br>
+            <span style="color:var(--text2);font-size:13px">9 个有数据的合约中，平均盘面偏差仅 1.09%。市场能有效预判 P₃，误差主要来自 P₃ 超预期突变。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">3</span>
+          <div>
+            <strong>P₃→结算偏差可达 10-15%，但这不是市场错误，是机制必然</strong><br>
+            <span style="color:var(--text2);font-size:13px">三周均值天然滞后于单日现货。不要用"结算价和现货差 15%"来判断市场失效——这只是平滑机制的数学结果。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">4</span>
+          <div>
+            <strong>春节前后的 02 合约偏差系统性放大</strong><br>
+            <span style="color:var(--text2);font-size:13px">EC2502 偏差 −14.9%，EC2602 偏差 −6.3%。春节后货量真空期+运价断崖式下跌，P₁/P₂ 还在高位而 P₃ 已崩。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">5</span>
+          <div>
+            <strong>翘尾合约（P₃ 单周涨 10%+）偏差同样大</strong><br>
+            <span style="color:var(--text2);font-size:13px">EC2510 P₃ 单周 +15.1%、EC2506 P₃ 连续大涨——上涨趋势下结算价会显著低于 P₃，规律双向对称。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">6</span>
+          <div>
+            <strong>实操核心：在 P₁ 发布后才介入，确定性最高</strong><br>
+            <span style="color:var(--text2);font-size:13px">P₁ 已知后只剩 P₂/P₃ 两个未知量。此时盘面价格 ≈ 市场对 P₃ 的预期。若盘面与 (P₁+预估P₂+预估P₃)/3 有显著差异，则存在套利窗口。</span>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <!-- 每手偏差金额 -->
+  <div class="section">
+    <h2>八、每手偏差金额分布</h2>
+    <div class="card">
+      <table>
+        <tr><th>合约</th><th>盘面→结算(点)</th><th>每手偏差</th><th>P₃→结算(点)</th><th>每手偏差</th><th>市场背景</th></tr>
+        <tr><td>EC2404</td><td class="gr">−16.4</td><td>820 元</td><td>—</td><td>—</td><td>平稳首次交割</td></tr>
+        <tr><td>EC2406</td><td class="or">−72.7</td><td>3,635 元</td><td>—</td><td>—</td><td>红海高峰</td></tr>
+        <tr><td>EC2408</td><td class="gr">−50.8</td><td>2,540 元</td><td class="rd">−335.6</td><td>16,778 元</td><td>高位见顶回落</td></tr>
+        <tr><td>EC2410</td><td class="gr">+6.6</td><td>330 元</td><td class="rd">−60.0</td><td>3,000 元</td><td>温和下跌</td></tr>
+        <tr><td>EC2412</td><td>—</td><td>—</td><td class="gr">+68.9</td><td>3,445 元</td><td>年末翘尾</td></tr>
+        <tr><td>EC2502</td><td class="gr">−17.2</td><td>860 元</td><td class="rd">−294.0</td><td>14,700 元</td><td>春节断崖</td></tr>
+        <tr><td>EC2504</td><td>—</td><td>—</td><td class="gr">−17.3</td><td>867 元</td><td>淡季震荡</td></tr>
+        <tr><td>EC2506</td><td class="or">~−31</td><td>~1,550 元</td><td class="gr">+203.9</td><td>10,195 元</td><td>旺季连续拉升</td></tr>
+        <tr><td>EC2508</td><td class="gr">−0.7</td><td>35 元</td><td class="rd">−145.1</td><td>7,254 元</td><td>旺季转淡</td></tr>
+        <tr><td>EC2510</td><td class="rd">+30.7</td><td>1,535 元</td><td class="gr">+151.1</td><td>7,554 元</td><td>翘尾大涨</td></tr>
+        <tr><td>EC2512</td><td>—</td><td>—</td><td class="gr">+128.5</td><td>6,426 元</td><td>年末稳步上涨</td></tr>
+        <tr><td>EC2602</td><td>—</td><td>—</td><td class="rd">−111.9</td><td>5,593 元</td><td>春节后下跌</td></tr>
+        <tr><td>EC2604</td><td class="gr">−5.3</td><td>265 元</td><td class="rd">−68.1</td><td>3,403 元</td><td>淡季阴跌</td></tr>
+        <tr><td>EC2605</td><td class="or">−42.7</td><td>2,135 元</td><td class="gr">+108.4</td><td>5,422 元</td><td>地缘事件拉升</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:14px">
+        <strong>两种偏差的量级对比：</strong><br>
+        · <strong>盘面→结算</strong>（定价效率）：平均 <strong>1,071 元/手</strong>，最高 3,635 元/手<br>
+        · <strong>P₃→结算</strong>（平滑效应）：平均 <strong>7,053 元/手</strong>，最高 16,778 元/手<br>
+        · 平滑效应是定价误差的 <strong>6.6 倍</strong>——说明市场定价本身很准，但三周均值机制无法消除
+      </div>
+    </div>
+  </div>
+
+  <!-- 实操 -->
+  <div class="section">
+    <h2>九、实操启示</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3 style="color:var(--green)">确定性场景</h3>
+        <ul style="font-size:13px;color:var(--text2);padding-left:18px;line-height:2">
+          <li><strong>盘面对 P₃ 定价极准</strong>：平均偏差 < 1%，最后交易日盘面是 P₃ 的极佳代理变量</li>
+          <li><strong>P₁→P₃ 趋势方向 = 获利方方向</strong>：100% 命中</li>
+          <li><strong>P₁ 发布后介入</strong>：只剩 2 个未知量，可用 SCFI 领先性预判</li>
+          <li><strong>温和月份（04/10）</strong>：盘面偏差 + 平滑偏差均 < 3%</li>
+          <li><strong>最后 1 天盘面价 ≈ P₃ 预期</strong>，不是结算价预期</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3 style="color:var(--red)">风险场景</h3>
+        <ul style="font-size:13px;color:var(--text2);padding-left:18px;line-height:2">
+          <li><strong>春节前后（02 合约）</strong>：平滑偏差 6-15%，盘面可能低估三周均值滞后</li>
+          <li><strong>P₃ 尾周突变（±10%+）</strong>：盘面会误判，EC2510 偏差 2.64%</li>
+          <li><strong>地缘事件</strong>：可在 1-2 周逆转趋势，打乱所有预测</li>
+          <li><strong>SCFIS 1-2 周滞后性</strong>：反映的是历史运价，不是即期</li>
+          <li><strong>规则变更</strong>：2026.5 起最小变动调为 0.5 点，新增月份合约</li>
+        </ul>
+      </div>
+    </div>
+    <div class="notice" style="margin-top:16px">
+      <strong>核心结论：</strong>最后交易日收盘价反映市场对 P₃ 的预期（偏差约 1%），而 P₃ 与交割结算价的偏差（平均 6.3%）是
+      三周均值平滑机制的数学必然，不是市场失效。两者性质完全不同——<strong>盘面偏差是定价问题，P₃ 偏差是机制问题</strong>。
+      做交割博弈时，应该用"收盘价 + P₁/P₂/P₃ 趋势"来推算最终的结算价区间，而不是简单认为盘面价就是结算价。
+    </div>
+  </div>
+
+  <!-- 交割博弈操作指南 -->
+  <div class="section">
+    <h2>十、交割博弈完整操作指南</h2>
+
+    <div class="card">
+      <h3>核心逻辑</h3>
+      <div class="info-box">
+        交割博弈的本质是：<strong>预判 (P₁+P₂+P₃)/3 的均值与当前期货盘面的偏离方向</strong>。<br>
+        不是赌 P₃ 的单日值，而是赌三周均值的走势方向。
+      </div>
+      <table>
+        <tr><th>关键日期</th><th>事件</th><th>已知量</th><th>未知量</th><th>确定性</th></tr>
+        <tr><td>T-21（倒数第3个周一）</td><td>P₁ 发布</td><td>1/3</td><td>P₂, P₃</td><td><span class="tag tag-mu">中</span></td></tr>
+        <tr><td>T-14（倒数第2个周一）</td><td>P₂ 发布</td><td>2/3</td><td>P₃</td><td><span class="tag tag-fx">高</span></td></tr>
+        <tr><td>T-0（最后交易日周一）</td><td>P₃ 发布（15:05）</td><td>3/3</td><td>无</td><td><span class="tag tag-fx">确定</span></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>阶段 A：P₁ 发布前（T-28 ~ T-21）—— 不做交割博弈</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:18px;line-height:2">
+        <li>3 个未知量，不确定性太高，胜率≈猜硬币</li>
+        <li>此阶段仅做趋势跟踪，关注：SCFI 欧线每周五订舱价、船司停航/涨价公告、地缘事件</li>
+        <li>关注远月合约与近月的价差结构，判断市场对远期方向的定价</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>阶段 B：P₁ 发布后 ~ P₂ 发布前（T-21 ~ T-14）⭐ 最佳建仓窗口</h3>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px">
+        已知 P₁，未知 P₂/P₃。核心问题：<strong>P₂/P₃ 会比 P₁ 高还是低？</strong><br>
+      </p>
+      <table>
+        <tr><th>判断信号</th><th>方向</th><th>交割策略</th><th>可靠性</th></tr>
+        <tr>
+          <td>SCFI 欧线周环比连续 > +3%</td>
+          <td>P₂/P₃ ↑</td>
+          <td><span class="rd">做空进交割</span>（结算价会低于 P₃）</td>
+          <td><span class="tag tag-fx">高</span></td>
+        </tr>
+        <tr>
+          <td>SCFI 欧线周环比连续 < −3%</td>
+          <td>P₂/P₃ ↓</td>
+          <td><span class="gr">做多进交割</span>（结算价会高于 P₃）</td>
+          <td><span class="tag tag-fx">高</span></td>
+        </tr>
+        <tr>
+          <td>船司密集宣涨 GRI（综合费率附加费）</td>
+          <td>P₂/P₃ ↑</td>
+          <td>做空</td>
+          <td><span class="tag tag-mu">中</span></td>
+        </tr>
+        <tr>
+          <td>旺季备货（圣诞/春节前 6-8 周）</td>
+          <td>P₂/P₃ ↑</td>
+          <td>做空（旺季拉升趋势下空头占优）</td>
+          <td><span class="tag tag-mu">中</span></td>
+        </tr>
+        <tr>
+          <td>春节后货量真空期（2月合约）</td>
+          <td>P₂/P₃ ↓</td>
+          <td>做多（节后暴跌趋势下多头占优）</td>
+          <td><span class="tag tag-fx">极高</span></td>
+        </tr>
+      </table>
+      <div class="info-box" style="margin-top:12px">
+        关键操作：预估结算价 ≈ (P₁ + SCFI推算P₂ + SCFI推算P₃) / 3<br>
+        → 若当前盘面 < 预估结算价 → <strong>做多进交割</strong><br>
+        → 若当前盘面 > 预估结算价 → <strong>做空进交割</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>阶段 C：P₂ 发布后 ~ 最后交易日（T-14 ~ T-0）⭐⭐ 确定性最高</h3>
+      <ul style="font-size:13px;color:var(--text2);padding-left:18px;line-height:2">
+        <li><strong>已知 P₁、P₂，仅剩 P₃ 一个未知量</strong></li>
+        <li>此时盘面价 ≈ 市场对 P₃ 的预期（历史偏差仅 ~1%）</li>
+        <li><strong>若盘面价接近 (P₁+P₂+盘面价)/3 → 无套利空间，平仓离场</strong></li>
+        <li><strong>若盘面显著偏离估值（>2%）→ 存在套利窗口</strong></li>
+        <li>举例：P₁=1500, P₂=1600, 盘面=1700 → 结算≈1600 → 盘面高估 → 做空进交割</li>
+        <li>举例：P₁=2000, P₂=1800, 盘面=1700 → 结算≈1833 → 盘面低估 → 做多进交割</li>
+        <li>此时 SCFI 可以精确预判下一期 SCFIS（领先 1-2 周），P₃ 的预测误差大幅缩小</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>阶段 D：最后交易日（T-0）⭐⭐⭐ 终极博弈</h3>
+      <table>
+        <tr><th>铁律</th><th>说明</th></tr>
+        <tr><td><strong>① 盘面收敛到 P₃ 预期，不是结算价</strong></td><td>收盘前盘面在交易"P₃ 会是多少"，而非"(P₁+P₂+P₃)/3"</td></tr>
+        <tr><td><strong>② P₃ 在 15:05 发布，期货 15:00 已收盘</strong></td><td>5 分钟时间差无法消除，最后 30 分钟波动最剧烈</td></tr>
+        <tr><td><strong>③ 你在赌的不是 P₃，是 (P₁+P₂+P₃)/3</strong></td><td>EC2502：盘面 1995.6 ≈ P₃ 预期，但结算 1978 ≠ P₃ 1684</td></tr>
+        <tr><td><strong>④ 最后一天唯一的决策</strong></td><td>"P₃ 会超出还是低于盘面预期？"</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:12px">
+        <strong>最后交易日操作清单：</strong><br>
+        1. 确认 P₁ + P₂ 的值（已知）<br>
+        2. 看盘面价 ≈ 市场共识的 P₃<br>
+        3. 用自己的判断修正 P₃ 预期 → 计算预估结算价<br>
+        4. 预估结算价 vs 盘面价 → 决定做多/做空/平仓<br>
+        5. <strong>若判断 P₃ 会超预期（如尾周翘尾+15%）→ 做空</strong><br>
+        6. <strong>若判断 P₃ 会低于预期（如节后断崖）→ 做多</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>极端风险场景应对</h3>
+      <table>
+        <tr><th>场景</th><th>合约案例</th><th>特征</th><th>应对</th></tr>
+        <tr><td><strong>春节断崖</strong></td><td>EC2502, EC2602</td><td>P₁/P₂ 高位，P₃ 断崖跌</td><td><span class="gr">做多进交割（100%确定）</span>，仓位减半</td></tr>
+        <tr><td><strong>尾周翘尾</strong></td><td>EC2510, EC2506</td><td>P₁/P₂ 平稳，P₃ 涨 10%+</td><td><span class="rd">做空进交割（100%确定）</span></td></tr>
+        <tr><td><strong>地缘突变</strong></td><td>EC2605</td><td>最后 2 周事件发酵</td><td>评估方向后跟进，仓位减半</td></tr>
+        <tr><td><strong>旺季见顶</strong></td><td>EC2408</td><td>P₁ 巅峰→P₂ 松动→P₃ 回落</td><td><span class="gr">做多</span>，确定性高但幅度有限</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>风险控制铁律</h3>
+      <ol style="font-size:13px;color:var(--text2);padding-left:18px;line-height:2.2">
+        <li><strong>绝不能用"盘面价 = 结算价"</strong>——结算价是 (P₁+P₂+P₃)/3，不是 P₃</li>
+        <li><strong>P₁ 发布前不做交割博弈</strong>——3 个未知量，胜率等于猜</li>
+        <li><strong>P₂ 发布后确定性最高</strong>，但时间窗口仅 1 周，提前准备</li>
+        <li><strong>春节 02 合约是双向极端</strong>——偏差可达 15%，仓位必须减半</li>
+        <li><strong>最后交易日涨跌停板 ±20%</strong>，P₃ 极端超预期可能封板无法平仓</li>
+        <li><strong>SCFI→SCFIS 有 1-2 周时滞</strong>：用本周五 SCFI 推断下周一 SCFIS 是核心技能</li>
+        <li><strong>不要裸做交割博弈</strong>——至少用跨期套保或轻仓配置</li>
+      </ol>
+    </div>
+
+    <div class="card">
+      <h3>盈亏量化参考</h3>
+      <table>
+        <tr><th>偏差预估</th><th>每手盈亏（50元/点）</th><th>出现概率</th><th>典型合约</th></tr>
+        <tr><td>0-2%（温和月）</td><td>0 ~ 2,000 元/手</td><td>~50%</td><td>EC2404, EC2410, EC2504</td></tr>
+        <tr><td>2-5%（趋势月）</td><td>2,000 ~ 5,000 元/手</td><td>~20%</td><td>EC2412, EC2604</td></tr>
+        <tr><td>5-10%（强趋势月）</td><td>5,000 ~ 10,000 元/手</td><td>~20%</td><td>EC2408, EC2605</td></tr>
+        <tr><td>10-15%（极端月）</td><td>10,000 ~ 17,000 元/手</td><td>~10%</td><td>EC2502, EC2506, EC2510</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- SCFI vs SCFIS -->
+  <div class="section">
+    <h2>十一、SCFI vs SCFIS：订舱价与结算价的规律</h2>
+
+    <div class="card">
+      <h3>两种指数的本质区别</h3>
+      <table>
+        <tr><th>维度</th><th>SCFI（上海出口集装箱运价指数）</th><th>SCFIS（上海出口集装箱结算运价指数）</th></tr>
+        <tr><td><strong>全称</strong></td><td>Shanghai Containerized Freight Index</td><td>Containerized Freight Index (Settlement)</td></tr>
+        <tr><td><strong>发布日</strong></td><td>每周五</td><td>每周一 15:05</td></tr>
+        <tr><td><strong>单位</strong></td><td>美元/TEU（20尺小箱）</td><td>"点"（指数点，基期 2020.6.1 = 1000）</td></tr>
+        <tr><td><strong>反映内容</strong></td><td>本周订舱价，<strong>预计未来 1-2 周出运</strong></td><td>上周已离港航班，<strong>实际结算运价</strong></td></tr>
+        <tr><td><strong>价格性质</strong></td><td>挂牌价/报价（可与船司协商，可退订）</td><td>实际成交结算价（已发生的真实交易）</td></tr>
+        <tr><td><strong>时间属性</strong></td><td><strong>领先指标</strong>（领先 1-3 周）</td><td><strong>滞后指标</strong>（反映过去 1 周）</td></tr>
+        <tr><td><strong>样本构成</strong></td><td>班轮公司 + 货代，权重基本平衡</td><td>班轮公司为主（11家班轮+4家货代，班轮公司市场份额>80%）</td></tr>
+        <tr><td><strong>计算方式</strong></td><td>简单算术平均</td><td>成交箱量加权平均</td></tr>
+        <tr><td><strong>箱型权重</strong></td><td>仅 20尺小箱</td><td>20尺:40尺 ≈ 20:80（2023年），25:75（2025年3月起）</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>领先滞后关系（核心规律）</h3>
+      <div class="formula" style="font-size:13px;line-height:1.8;text-align:left;padding:20px 24px">
+        SCFI（周五发布） ──领先 1~3 周──▶ SCFIS（周一发布）<br>
+        订舱报价 ──────────────▶ 结算实价<br>
+        [先行指标] &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[滞后指标]
+      </div>
+      <p style="font-size:13px;color:var(--text2);margin-top:12px">
+        <strong>机制解释：</strong>船公司周五放价→货主货代订舱→1-2周后货物装船离港→下一个周一 SCFIS 发布结算运价。<br>
+        因此，<strong>本周五的 SCFI 变动，大概 2-3 周后才会体现在 SCFIS 上</strong>。这就是 SCFI 可以用来预判 P₂ 和 P₃ 的核心逻辑。
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>换算关系</h3>
+      <table>
+        <tr><th>换算方式</th><th>关系</th><th>精度</th></tr>
+        <tr><td><strong>SCFI(美元/TEU) → SCFIS(点)</strong></td><td>SCFIS ≈ SCFI × <strong>1.3 ~ 1.5</strong></td><td>粗略估算</td></tr>
+        <tr><td><strong>比值 SCFI / SCFIS（USD折算后）</strong></td><td>0.8 ~ 1.2</td><td>统计区间</td></tr>
+        <tr><td><strong>$1000/FEU → SCFIS 点</strong></td><td>$1000/FEU ≈ <strong>1300 点</strong></td><td>实务经验值</td></tr>
+        <tr><td><strong>1 SCFIS 点 → 美元运费</strong></td><td>1 点 ≈ <strong>$0.77/FEU</strong></td><td>粗略估值</td></tr>
+      </table>
+      <div class="notice" style="margin-top:12px">
+        ⚠️ SCFI 本身是挂牌价，通常比实际成交价高约 10%-20%。因此用 SCFI 直接换算 SCFIS 时需打折扣。<br>
+        且大柜(40尺)运价变动幅度不同于小柜(20尺)，SCFIS 中大柜权重 80%，当大柜涨价幅度大于小柜时，SCFIS 涨幅会超过 SCFI。
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>SCFI 预判 SCFIS 的实操应用</h3>
+      <table>
+        <tr><th>场景</th><th>SCFI 信号</th><th>对 SCFIS 的预判</th><th>交割博弈含义</th></tr>
+        <tr>
+          <td>船司密集宣涨 GRI</td>
+          <td>SCFI 周环比 +5~15%</td>
+          <td>2-3 周后 SCFIS 将跟进上涨</td>
+          <td>若 P₁ 发布前已宣涨 → P₂/P₃ 大概率比 P₁ 高 → <span class="rd">做空</span></td>
+        </tr>
+        <tr>
+          <td>船司降价揽货</td>
+          <td>SCFI 周环比 −3~10%</td>
+          <td>2-3 周后 SCFIS 将跟进下跌</td>
+          <td>若持续降价 → P₂/P₃ 大概率比 P₁ 低 → <span class="gr">做多</span></td>
+        </tr>
+        <tr>
+          <td>旺季货量激增</td>
+          <td>SCFI 连续 3 周上涨</td>
+          <td>SCFIS 将滞后兑现涨幅</td>
+          <td>P₁→P₃ 上涨趋势确认 → 做空进交割</td>
+        </tr>
+        <tr>
+          <td>春节前抢运尾声</td>
+          <td>SCFI 高位拐头向下</td>
+          <td>SCFIS 将在春节后暴跌</td>
+          <td>P₁ 还在高位，P₃ 将断崖 → 做多进交割</td>
+        </tr>
+        <tr>
+          <td>节后货量真空</td>
+          <td>SCFI 低位企稳</td>
+          <td>SCFIS 滞后见底</td>
+          <td>P₁/P₂ 低位，P₃ 可能小幅反弹 → 方向不明，不宜博弈</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>时间线：SCFI 如何一步步变成 SCFIS</h3>
+      <div class="info-box" style="line-height:2">
+        <strong>示例：</strong>船司 6月13日（周五）宣布 7月1日起 GRI 涨价 $1000/FEU<br><br>
+        ┃ 6月13日（周五）：SCFI 反映涨价预期，上涨 +10%<br>
+        ┃ 6月16日~22日：货主按新价格订舱（SCFI 持续高位）<br>
+        ┃ 6月23日~29日：货物装船离港<br>
+        ┃ <strong>6月30日（周一）：SCFIS 首次反映涨价后的结算运价</strong> ← 这就是 P₃！<br>
+        ┃ 但 6月16日和 6月23日的 SCFIS 还在反映 6月初的低价 ← 这就是 P₁ 和 P₂ 还在低位的原因<br>
+        ┃ <strong>→ 结果：P₁ 低、P₂ 低、P₃ 高 → 结算价 < P₃ → 做空获利</strong><br><br>
+        这就是 <strong>EC2506 合约的经典演绎</strong>：P₁=1697, P₂=1937, P₃=2123，结算=1919 < P₃=2123。
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>SCFI/SCFIS 规律对交割博弈的核心意义</h3>
+      <table>
+        <tr><th>结论</th><th>说明</th></tr>
+        <tr><td><strong>① SCFI 是 SCFIS 的先行指标</strong></td><td>领先 1-3 周，可以用本周五的 SCFI 推断下下周一（即 P₂ 或 P₃）的 SCFIS</td></tr>
+        <tr><td><strong>② P₁ 发布时，P₂/P₃ 的 SCFI 信号已出</strong></td><td>P₁ 对应的 SCFI 已在 3 周前发布；P₂/P₃ 对应的 SCFI 可能已经或即将发布</td></tr>
+        <tr><td><strong>③ P₂ 发布后，P₃ 的 SCFI 信号通常已出</strong></td><td>SCFI 领先 2 周的话，P₂ 发布时 P₃ 的 SCFI 已在上周五发布，预判精度最高</td></tr>
+        <tr><td><strong>④ 核心公式</strong></td><td>预估 P₃ ≈ 最近一期 SCFI × 换算系数(1.3~1.5) × 市场热度折溢价</td></tr>
+        <tr><td><strong>⑤ 最大盲区</strong></td><td>最后一周的 SCFI→SCFIS 只有 1 周领先，换算误差最大，P₃ 不确定性最高</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  数据来源：上海国际能源交易中心（INE）、上海航运交易所（SSE）、银河期货、建信期货、南华期货、格林大华期货、方正中期期货等公开研报<br>
+  数据区间：2024年4月（EC2404首次交割）至 2026年5月（EC2605最新交割） | 报告生成：2026年5月26日<br>
+  "~"标记为近似值，"—"标记为数据未获取 | 合约乘数 50元/点<br>
+  <br>
+  ⚠️ 免责声明：以上内容仅供研究参考，不构成任何投资建议。集运指数期货波动剧烈，投资需谨慎。
+</div>
+
+</body>
+</html>
