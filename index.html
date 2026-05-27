@@ -1165,6 +1165,187 @@
     </div>
   </div>
 
+  <!-- 跨期套保策略 -->
+  <div class="section">
+    <h2>十四、跨期套保策略</h2>
+
+    <div class="card">
+      <h3>EC 跨期套保的特殊性</h3>
+      <p style="font-size:13px;color:var(--text2);line-height:2">
+        商品期货跨期套保通常赌"近远月价差收敛"，但 EC 是现金交割，每个合约的标的都是<strong>同一个 SCFIS 指数在不同时间窗口的三周均值</strong>。<br>
+        02 合约的结算价 = 1月底~2月中 SCFIS 三周均值；04 合约 = 3月底~4月中 SCFIS 三周均值。<br>
+        <strong>两者差的是时间差 + 季节性差，不是仓储成本或资金成本。</strong><br>
+        所以 EC 的跨期价差本质上是在交易"SCFIS 从现在到未来的路径"。
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>交割博弈单腿的风险盲区</h3>
+      <table>
+        <tr><th>方向</th><th>典型场景</th><th>盈利逻辑</th><th>最大风险</th></tr>
+        <tr>
+          <td><span class="gr">做多进交割</span></td>
+          <td>02（节后暴跌）</td>
+          <td>P₁→P₃ 跌 → 结算 > P₃</td>
+          <td>运价不跌反涨（地缘事件）→ P₃ 超预期 → 结算低于开仓价</td>
+        </tr>
+        <tr>
+          <td><span class="rd">做空进交割</span></td>
+          <td>06（旺季拉升）</td>
+          <td>P₁→P₃ 涨 → 结算 < P₃</td>
+          <td>运价不涨反跌（需求崩塌）→ P₃ 低于预期 → 结算高于开仓价</td>
+        </tr>
+      </table>
+      <div class="info-box" style="margin-top:12px">
+        核心风险：<strong>P₃ 方向与季节性预期相反。</strong>14 个合约中方向 100% 符合季节性预期，但地缘事件（EC2605）和翘尾突变（EC2510）的<strong>幅度</strong>可以非常大，单腿裸做的尾部风险不可忽视。
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>方案 A：同向远月对冲 —— 降低 P₃ 意外风险</h3>
+      <table>
+        <tr><th>近月操作</th><th>对冲操作</th><th>原理</th></tr>
+        <tr><td>做多 02</td><td><span class="gr">做多 04</span>（30-50%仓位）</td><td>若运价意外上涨，02多头亏 + 04多头赚，部分抵消</td></tr>
+        <tr><td>做空 06</td><td><span class="rd">做空 08</span>（30-50%仓位）</td><td>若运价意外下跌，06空头亏 + 08空头赚，部分抵消</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:12px">
+        <strong>优点：</strong>简单直接，降低尾部风险<br>
+        <strong>缺点：</strong>正常年份对冲腿拖累收益；若 02/04 方向一致（都是淡季），对冲效果差<br>
+        <strong>适用：</strong>担心黑天鹅，愿意牺牲部分收益换取安全
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>方案 B：季节性配对交易 ⭐ 推荐</h3>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px">
+        利用不同月份季节性方向相反，构建天然对冲。两条腿各自都有正的季节性格局。
+      </p>
+      <table>
+        <tr><th>配对</th><th>近月</th><th>远月</th><th>逻辑</th></tr>
+        <tr>
+          <td><strong>02-06 配对</strong></td>
+          <td><span class="gr">做多 02</span></td>
+          <td><span class="rd">做空 06</span></td>
+          <td>节后暴跌多头占优 vs 旺季拉升空头占优，方向天然对冲</td>
+        </tr>
+        <tr>
+          <td><strong>08-10 配对</strong></td>
+          <td><span class="gr">做多 08</span></td>
+          <td><span class="rd">做空 10</span></td>
+          <td>见顶回落多头占优 vs 翘尾大涨空头占优，方向天然对冲</td>
+        </tr>
+      </table>
+
+      <h3 style="margin-top:16px">以 02-06 配对为例：组合在各种宏观环境下的表现</h3>
+      <table>
+        <tr><th>宏观环境</th><th>02 多头盈亏</th><th>06 空头盈亏</th><th>组合效果</th></tr>
+        <tr>
+          <td>运价如期下跌（正常年份）</td>
+          <td class="gr">大赚（结算>P₃，+10~15%）</td>
+          <td class="or">可能小亏（运价跌，对空头不利）</td>
+          <td class="gr">净盈利，02弹性>06</td>
+        </tr>
+        <tr>
+          <td>运价意外上涨（地缘事件）</td>
+          <td class="rd">亏损（结算<P₃）</td>
+          <td class="gr">大赚（运价涨，空头有利）</td>
+          <td class="gr">净盈利，06弹性>02</td>
+        </tr>
+        <tr>
+          <td>运价平稳</td>
+          <td class="or">小赚或持平</td>
+          <td class="or">小赚或持平</td>
+          <td>双边微利</td>
+        </tr>
+      </table>
+      <div class="info-box" style="margin-top:12px">
+        <strong>关键优势：</strong>无论宏观怎么走，总有一腿大赚。这是<strong>真正意义上的"套保"而非简单"对冲"</strong>——两条腿各自都有正的季节性格局预期，不是牺牲收益换安全，而是同时获取两个独立机会。
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>方案 C：纯价差交易（不进入交割）</h3>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px">
+        不做单腿交割博弈，只交易近远月价差的季节性扩张/收缩。
+      </p>
+      <table>
+        <tr><th>时间窗口</th><th>价差特征</th><th>操作</th><th>逻辑</th></tr>
+        <tr>
+          <td>12月 ~ 1月</td>
+          <td>02-04 价差 <strong class="gr">扩大</strong></td>
+          <td>买 02-04 价差</td>
+          <td>02 春节前抢运高位 vs 04 淡季低位</td>
+        </tr>
+        <tr>
+          <td>3月 ~ 4月</td>
+          <td>04-06 价差 <strong class="rd">扩大</strong></td>
+          <td>卖 04-06 价差</td>
+          <td>04 淡季低位 vs 06 旺季预期拉升</td>
+        </tr>
+        <tr>
+          <td>7月 ~ 8月</td>
+          <td>08-10 价差 <strong class="gr">收缩</strong></td>
+          <td>卖 08-10 价差</td>
+          <td>08 旺季见顶回落 vs 10 翘尾预期</td>
+        </tr>
+      </table>
+      <div class="notice" style="margin-top:12px">
+        价差交易需要比现有数据更细粒度的历史价差序列，以上仅为方向性框架，实盘需回测验证。
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>仓位配比与适用场景</h3>
+      <table>
+        <tr><th>策略</th><th>近月仓位</th><th>远月仓位</th><th>净暴露</th><th>适用资金量</th></tr>
+        <tr><td>裸做交割博弈</td><td>100%</td><td>0</td><td class="rd">高风险</td><td>小资金（<5万）</td></tr>
+        <tr><td>方案A（同向对冲）</td><td>100%</td><td>30-50% 同向</td><td class="or">中等</td><td>中等资金（5-20万）</td></tr>
+        <tr><td>方案B（季节配对）⭐</td><td>100%</td><td>80-100% 反向</td><td class="gr">低风险</td><td>大资金（>20万）</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>跨期套保注意事项</h3>
+      <ol class="rule-list">
+        <li>
+          <span class="rule-num">1</span>
+          <div>
+            <strong>远月流动性差</strong><br>
+            <span style="color:var(--text2);font-size:13px">10/12 等远月合约在近月交割时成交量可能极低，滑点大。建议只用 04/06/08 等活跃月份做对冲腿，避免用 10/12 对冲。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">2</span>
+          <div>
+            <strong>配对不是无风险</strong><br>
+            <span style="color:var(--text2);font-size:13px">若发生全市场级别单边行情（如 2024 红海事件全年运价暴涨），02 和 06 可能同向暴涨，配对两腿都错。但即使如此，损失也远小于裸做单腿。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">3</span>
+          <div>
+            <strong>时间错位风险</strong><br>
+            <span style="color:var(--text2);font-size:13px">02 最后交易日在 2 月底，06 在 6 月底，中间差 4 个月。若 2-4 月发生重大事件（地缘升级），对冲腿可能无法完全覆盖。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">4</span>
+          <div>
+            <strong>最优对冲比例不是 1:1</strong><br>
+            <span style="color:var(--text2);font-size:13px">02 波动 ~15%，04 波动 ~8%。做多 02 + 做多 04 对冲时，04 仓位应放大到 1.5-2 倍才能有效对冲。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">5</span>
+          <div>
+            <strong>进入交割月后的展期</strong><br>
+            <span style="color:var(--text2);font-size:13px">对冲腿（远月）临近交割时需要提前展期到更远合约，否则会陷入"两个合约同时进交割"的双重博弈。</span>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
 </div>
 
 <div class="footer">
