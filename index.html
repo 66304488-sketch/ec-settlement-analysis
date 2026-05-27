@@ -756,6 +756,148 @@
     </div>
   </div>
 
+  <!-- 交割期震荡规律 -->
+  <div class="section">
+    <h2>十二、交割期震荡规律：三周窗口的波动特征</h2>
+
+    <div class="card">
+      <h3>三周交割窗口的波动量级</h3>
+      <table>
+        <thead>
+          <tr><th>合约</th><th>P₁</th><th>P₃</th><th>P₁→P₃ 波幅</th><th>特征</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>EC2408</td><td>6,060.83</td><td>5,486.45</td><td class="rd">−9.5%</td><td>旺季见顶回落</td></tr>
+          <tr><td>EC2412</td><td>3,456.71</td><td>3,513.80</td><td class="or">4.3%（V型）</td><td>P₂先跌后P₃反弹</td></tr>
+          <tr><td>EC2502</td><td>~2,100</td><td>1,684.40</td><td class="rd">−19.8% ⚠️</td><td>春节断崖，最大波幅</td></tr>
+          <tr><td>EC2504</td><td>1,402.35</td><td>1,429.39</td><td class="or">7.1%（双向）</td><td>淡季先涨后跌</td></tr>
+          <tr><td>EC2506</td><td>1,697.63</td><td>2,123.24</td><td class="gr">+20.0% ⚠️</td><td>旺季连续拉升</td></tr>
+          <tr><td>EC2508</td><td>~2,300</td><td>1,990.20</td><td class="rd">−13.5%</td><td>旺季转淡季切换</td></tr>
+          <tr><td>EC2510</td><td>~1,100</td><td>1,312.71</td><td class="gr">+18.5%</td><td>P₃翘尾突变</td></tr>
+          <tr><td>EC2512</td><td>1,510.56</td><td>1,742.64</td><td class="gr">+13.3%</td><td>年末稳步上涨</td></tr>
+          <tr><td>EC2602</td><td>1,859.31</td><td>1,657.94</td><td class="rd">−10.8%</td><td>春节后下跌</td></tr>
+          <tr><td>EC2604</td><td>1,728.17</td><td>1,567.20</td><td class="rd">−9.3%</td><td>淡季阴跌</td></tr>
+          <tr><td>EC2605</td><td>~1,680</td><td>1,863.74</td><td class="gr">+9.9%</td><td>地缘事件拉升</td></tr>
+        </tbody>
+      </table>
+      <div class="info-box" style="margin-top:12px">
+        <strong>三周交割期内价格波动普遍在 7%~20%，远大于盘面→结算 1% 的定价偏差。</strong><br>
+        传统认知"临近交割价格收敛"在 EC 上不成立——收敛的是盘面→P₃，但 P₃ 本身还在剧烈变动。
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>哪一周最剧烈？P₃ 最后一周是波动核心</h3>
+      <table>
+        <tr><th>阶段</th><th>平均绝对变幅</th><th>最大单周变幅</th><th>合约案例</th></tr>
+        <tr><td>P₁ → P₂</td><td class="or">5.2%</td><td>14.1%（EC2506）</td><td>旺季拉升第二周</td></tr>
+        <tr><td style="background:rgba(77,166,255,0.06)"><strong>P₂ → P₃</strong></td><td class="rd" style="background:rgba(77,166,255,0.06)"><strong>8.2%</strong></td><td>15.1%（EC2510）</td><td>翘尾突变最后一周</td></tr>
+      </table>
+      <p style="font-size:13px;color:var(--text2);margin-top:10px">
+        14 个合约中，<strong>11 个的 P₂→P₃ 变幅大于 P₁→P₂</strong>。最后一周波动强度是前两周的 <strong>1.6 倍</strong>。<br>
+        原因：P₁/P₂ 反映的是"过去两周已离港的运价"，而 P₃ 定价"当下即期的市场"，信息集中爆发。
+      </p>
+    </div>
+
+    <div class="card">
+      <h3>三种震荡模式（14个合约100%可归类）</h3>
+      <table>
+        <tr><th>模式</th><th>合约数</th><th>典型合约</th><th>特征</th><th>交割策略</th></tr>
+        <tr>
+          <td><strong>趋势延续型</strong></td>
+          <td>8 个（57%）</td>
+          <td>EC2408/2502/2506/2508/2512/2602/2604</td>
+          <td>P₁→P₂→P₃ 方向一致，单边运行</td>
+          <td>P₁ 方向确认后顺势介入</td>
+        </tr>
+        <tr>
+          <td><strong>V 型反转</strong></td>
+          <td>3 个（21%）</td>
+          <td>EC2412/2504</td>
+          <td>P₂ 回调后 P₃ 反向大幅修正</td>
+          <td>P₂ 后反向布局，确定性高</td>
+        </tr>
+        <tr>
+          <td><strong>翘尾突变</strong></td>
+          <td>3 个（21%）</td>
+          <td>EC2506/2510/2605</td>
+          <td>P₁/P₂ 平稳，P₃ 突然涨 9~15%</td>
+          <td>需 SCFI 提前捕捉信号</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>盘面在交割期的震荡特征</h3>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:8px">
+        盘面对 P₃ 的定价平均偏差仅 ~1%，但有两个例外值得关注：
+      </p>
+      <table>
+        <tr><th>合约</th><th>收盘价</th><th>P₃</th><th>盘面偏差</th><th>原因</th></tr>
+        <tr><td>EC2502</td><td>1,995.6</td><td>1,684.40</td><td class="rd">+15.6% 高估</td><td>节后崩盘速度超预期，盘面未充分折价</td></tr>
+        <tr><td>EC2510</td><td>1,130.9</td><td>1,312.71</td><td class="rd">−16.0% 低估</td><td>P₃ 单周 +15.1%，盘面未充分定价翘尾</td></tr>
+      </table>
+      <div class="info-box" style="margin-top:12px">
+        <strong>规律：</strong>盘面在平稳月份定价精准（偏差 &lt;1%），在 P₃ 突变月份才会大幅偏离。<br>
+        盘面的震荡不是随机的——只有当 P₃ 本身超预期时才会剧烈波动。换句话说，<strong>盘面不是震荡的来源，现货才是。</strong>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>按合约月份的震荡特征</h3>
+      <table>
+        <tr><th>合约月份</th><th>典型波幅</th><th>震荡性质</th><th>核心驱动</th></tr>
+        <tr><td><strong>02（春节后）</strong></td><td class="rd">10~20%</td><td>单向暴跌</td><td>货量真空 + 运价断崖</td></tr>
+        <tr><td><strong>04</strong></td><td class="or">7~9%</td><td>双向震荡</td><td>淡季，方向不明</td></tr>
+        <tr><td><strong>06</strong></td><td class="rd">15~20%</td><td>单向拉升</td><td>旺季备货持续推涨</td></tr>
+        <tr><td><strong>08</strong></td><td class="rd">9~14%</td><td>见顶回落</td><td>圣诞备货尾声→淡季切换</td></tr>
+        <tr><td><strong>10</strong></td><td class="rd">10~19%</td><td>翘尾/震荡</td><td>节前抢运 + 年末翘尾</td></tr>
+        <tr><td><strong>12</strong></td><td class="or">4~13%</td><td>稳步上涨</td><td>年末长协谈判推涨</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3>核心启示</h3>
+      <ol class="rule-list">
+        <li>
+          <span class="rule-num">1</span>
+          <div>
+            <strong>交割期不是"收敛期"而是"波动放大期"</strong><br>
+            <span style="color:var(--text2);font-size:13px">P₁ 到 P₃ 的三周内价格平均波动 12%，远不是"临近交割就平稳"的传统认知。收敛只发生在盘面→P₃，不发生在 P₁→P₃。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">2</span>
+          <div>
+            <strong>最后一周风险最高，P₂→P₃ 平均 8.2%</strong><br>
+            <span style="color:var(--text2);font-size:13px">且方向可能逆转（如 EC2412 从跌 2.7% 变成涨 4.4%）。P₂ 发布后的策略制定必须在 P₃ 发布前完成。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">3</span>
+          <div>
+            <strong>春节 02 合约是双向极端</strong><br>
+            <span style="color:var(--text2);font-size:13px">确定性最高（100% 单边跌），但幅度也最大（~15%），仓位必须减半。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">4</span>
+          <div>
+            <strong>盘面在最后交易日的震荡反而最小</strong><br>
+            <span style="color:var(--text2);font-size:13px">市场已充分消化 P₁/P₂ 信息，盘面≈P₃ 共识预期，偏差仅 ~1%。最后一天不是"赌大小"，而是"验证判断"。</span>
+          </div>
+        </li>
+        <li>
+          <span class="rule-num">5</span>
+          <div>
+            <strong>震荡的源头是 SCFIS，不是期货</strong><br>
+            <span style="color:var(--text2);font-size:13px">14 个合约盘面→结算偏差平均 1%，但 P₃→结算偏差平均 6.3%。交易的核心不是预测盘面，而是预测现货指数的三周走势。</span>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+
 </div>
 
 <div class="footer">
