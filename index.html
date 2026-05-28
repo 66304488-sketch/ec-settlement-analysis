@@ -2274,7 +2274,333 @@
     </div>
 
     <div class="card" style="margin-top:16px">
-      <h3>二、两张策略的时间线总览</h3>
+      <h3>二、年度操作时间轴（可视化）</h3>
+      <style>
+        .tl-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:12px}
+        .tl-grid{min-width:960px}
+        .tl-months{display:flex;margin-bottom:0}
+        .tl-months span{flex:1;text-align:center;padding:8px 0;font-size:13px;font-weight:700;color:var(--text);background:rgba(77,166,255,0.08);border-right:1px solid var(--border)}
+        .tl-months span:last-child{border-right:none}
+        .tl-row{display:flex;align-items:stretch;min-height:28px;border-bottom:1px solid rgba(255,255,255,0.04)}
+        .tl-row-label{width:72px;flex-shrink:0;font-size:11px;font-weight:700;color:var(--text2);display:flex;align-items:center;justify-content:flex-end;padding-right:10px;background:rgba(255,255,255,0.01)}
+        .tl-cell{flex:1;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;border-right:1px solid rgba(255,255,255,0.03);text-align:center;padding:4px 2px;line-height:1.3;min-height:28px}
+        .tl-cell:last-child{border-right:none}
+        .tl-seg-up{background:rgba(231,76,60,0.2);color:var(--red)}
+        .tl-seg-dn{background:rgba(46,204,113,0.2);color:var(--green)}
+        .tl-seg-wait{background:rgba(139,143,163,0.1);color:var(--text2)}
+        .tl-seg-prep{background:rgba(77,166,255,0.12);color:var(--accent)}
+        .tl-seg-warn{background:rgba(243,156,18,0.12);color:var(--orange)}
+        .tl-seg-do-more{background:rgba(46,204,113,0.2)}
+        .tl-seg-do-short{background:rgba(231,76,60,0.2)}
+        .tl-season{display:flex;min-height:32px}
+        .tl-season .tl-cell{font-size:11px;border-right:1px solid rgba(255,255,255,0.05)}
+        .tl-s-rush{background:rgba(231,76,60,0.15);color:var(--red)}
+        .tl-s-cliff{background:rgba(46,204,113,0.12);color:var(--green)}
+        .tl-s-lull{background:rgba(139,143,163,0.1);color:var(--text2)}
+        .tl-s-peak{background:rgba(231,76,60,0.18);color:var(--red)}
+        .tl-s-top{background:rgba(243,156,18,0.15);color:var(--orange)}
+        .tl-s-tail{background:rgba(155,89,182,0.15);color:var(--purple)}
+        .tl-s-ye{background:rgba(77,166,255,0.12);color:var(--accent)}
+        .tl-legend{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px 16px;font-size:10px;color:var(--text2)}
+        .tl-legend span{display:inline-flex;align-items:center;gap:4px}
+        .tl-legend .tl-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+        .tl-dot-far{background:rgba(139,143,163,0.25)}
+        .tl-dot-trans{background:rgba(243,156,18,0.35)}
+        .tl-dot-prep{background:rgba(77,166,255,0.3)}
+        .tl-dot-deliv{background:rgba(46,204,113,0.35)}
+        .tl-dot-deliv-s{background:rgba(231,76,60,0.35)}
+        @media(max-width:768px){.tl-grid{min-width:960px}.tl-row-label{width:56px;font-size:10px}.tl-cell{font-size:9px}.tl-months span{font-size:11px}}
+      </style>
+      <div class="tl-wrap">
+        <div class="tl-grid">
+
+          <!-- 月份标尺 -->
+          <div class="tl-months">
+            <span>1月</span><span>2月</span><span>3月</span><span>4月</span><span>5月</span><span>6月</span>
+            <span>7月</span><span>8月</span><span>9月</span><span>10月</span><span>11月</span><span>12月</span>
+          </div>
+
+          <!-- 季节阶段 -->
+          <div class="tl-season">
+            <span class="tl-cell tl-s-rush" style="flex:1">抢运高峰</span>
+            <span class="tl-cell tl-s-cliff" style="flex:1">春节断崖</span>
+            <span class="tl-cell tl-s-lull" style="flex:1">淡季磨底</span>
+            <span class="tl-cell tl-s-lull" style="flex:1">淡季→旺季</span>
+            <span class="tl-cell tl-s-peak" style="flex:1">旺季爬坡</span>
+            <span class="tl-cell tl-s-peak" style="flex:1">旺季高峰</span>
+            <span class="tl-cell tl-s-top" style="flex:1">高峰→见顶</span>
+            <span class="tl-cell tl-s-top" style="flex:1">见顶回落</span>
+            <span class="tl-cell tl-s-lull" style="flex:1">淡季</span>
+            <span class="tl-cell tl-s-tail" style="flex:1">国庆翘尾</span>
+            <span class="tl-cell tl-s-ye" style="flex:1">年末拉升</span>
+            <span class="tl-cell tl-s-ye" style="flex:1">年末+抢运</span>
+          </div>
+
+          <!-- SCFI方向 -->
+          <div class="tl-row">
+            <div class="tl-row-label">SCFI方向</div>
+            <span class="tl-cell tl-seg-up">↑ 急涨</span>
+            <span class="tl-cell tl-seg-dn">↓ 暴跌</span>
+            <span class="tl-cell tl-seg-wait">→ 低位</span>
+            <span class="tl-cell tl-seg-up">↑ 启动</span>
+            <span class="tl-cell tl-seg-up">↑ 攀升</span>
+            <span class="tl-cell tl-seg-up">↑ 高峰</span>
+            <span class="tl-cell tl-seg-up">↑ 高位</span>
+            <span class="tl-cell tl-seg-dn">↓ 拐头</span>
+            <span class="tl-cell tl-seg-wait">→ 低位</span>
+            <span class="tl-cell tl-seg-up">↑ 脉冲</span>
+            <span class="tl-cell tl-seg-up">↑ 稳步</span>
+            <span class="tl-cell tl-seg-up">↑ 上涨</span>
+          </div>
+
+          <!-- ===== 合约行 ===== -->
+
+          <!-- 02合约 -->
+          <div class="tl-row">
+            <div class="tl-row-label" style="color:#fff">EC02</div>
+            <span class="tl-cell" style="background:rgba(77,166,255,0.15);color:var(--accent);font-size:10px">交割准备<br>P₁窗口</span>
+            <span class="tl-cell" style="background:rgba(46,204,113,0.2);color:var(--green);font-size:10px">⭐ 交割博弈<br>P₂/P₃</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell" style="background:rgba(243,156,18,0.15);color:var(--orange);font-size:10px">近月过渡<br>SCFI信号</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--orange)">趋势</div>
+            <span class="tl-cell tl-seg-do-more" style="font-size:10px"><span class="gr">做多</span><br>（抢运中）</span>
+            <span class="tl-cell tl-seg-do-short" style="font-size:10px"><span class="rd">做空</span><br>（断崖）</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-do-more" style="font-size:10px"><span class="gr">做多</span><br>（抢运启动）</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--accent)">交割</div>
+            <span class="tl-cell" style="font-size:9px;color:var(--text2)">预判P₁高位<br>→做多方向</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--orange)">⚠ 等盘面<br>跌破结算线<br>→<span class="gr">做多</span></span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--text2)">关注SCFI<br>判断P₁方向</span>
+          </div>
+
+          <!-- 间隔线 -->
+          <div class="tl-row" style="min-height:4px;border-bottom:1px solid var(--border)"></div>
+
+          <!-- 04合约 -->
+          <div class="tl-row">
+            <div class="tl-row-label" style="color:#fff">EC04</div>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell" style="background:rgba(77,166,255,0.12);color:var(--accent);font-size:10px">交割准备<br>P₁窗口</span>
+            <span class="tl-cell" style="background:rgba(139,143,163,0.18);color:var(--text2);font-size:10px">交割博弈<br>方向不明</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--orange)">趋势</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">观望</span><span class="tl-cell tl-seg-wait">观望/轻仓</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--accent)">交割</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--text2)">SCFI方向<br>不明</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--text2)">方向不明<br>不做/极轻仓</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+
+          <div class="tl-row" style="min-height:4px;border-bottom:1px solid var(--border)"></div>
+
+          <!-- 06合约 -->
+          <div class="tl-row">
+            <div class="tl-row-label" style="color:#fff">EC06</div>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell" style="background:rgba(243,156,18,0.15);color:var(--orange);font-size:10px">近月过渡<br>SCFI确认</span>
+            <span class="tl-cell" style="background:rgba(77,166,255,0.15);color:var(--accent);font-size:10px">交割准备<br>P₁窗口</span>
+            <span class="tl-cell" style="background:rgba(231,76,60,0.2);color:var(--red);font-size:10px">⭐ 交割博弈<br>做空</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--orange)">趋势</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-do-more" style="font-size:10px"><span class="gr">做多</span><br>（旺季启动）</span>
+            <span class="tl-cell tl-seg-do-more" style="font-size:10px"><span class="gr">做多</span><br>（持有）</span>
+            <span class="tl-cell" style="font-size:10px;color:var(--text2)">平仓或<br>切换交割</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--accent)">交割</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--text2)">SCFI确认<br>上涨方向</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--accent)">P₁低位确认<br>盘面>1919</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--red)"><strong>做空06</strong><br>建仓>1919即安全</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+
+          <div class="tl-row" style="min-height:4px;border-bottom:1px solid var(--border)"></div>
+
+          <!-- 08合约 -->
+          <div class="tl-row">
+            <div class="tl-row-label" style="color:#fff">EC08</div>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell" style="background:rgba(77,166,255,0.15);color:var(--accent);font-size:10px">交割准备<br>P₁窗口</span>
+            <span class="tl-cell" style="background:rgba(46,204,113,0.2);color:var(--green);font-size:10px">⭐ 交割博弈<br>做多</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--orange)">趋势</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-do-short" style="font-size:10px"><span class="rd">做空</span><br>（高位拐头）</span>
+            <span class="tl-cell tl-seg-do-short" style="font-size:10px"><span class="rd">做空</span><br>（持有/平仓）</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--accent)">交割</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--text2)">P₁高位<br>关注SCFI拐头</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--orange)">⚠ 等盘面<br>跌破2135<br>→<span class="gr">做多</span></span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+
+          <div class="tl-row" style="min-height:4px;border-bottom:1px solid var(--border)"></div>
+
+          <!-- 10合约 -->
+          <div class="tl-row">
+            <div class="tl-row-label" style="color:#fff">EC10</div>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell" style="background:rgba(77,166,255,0.15);color:var(--accent);font-size:10px">交割准备<br>P₁窗口</span>
+            <span class="tl-cell" style="background:rgba(231,76,60,0.2);color:var(--red);font-size:10px">⭐ 交割博弈<br>做空</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--orange)">趋势</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-do-more" style="font-size:10px"><span class="gr">做多</span><br>（翘尾前夕）</span>
+            <span class="tl-cell tl-seg-do-more" style="font-size:10px"><span class="gr">做多</span><br>（翘尾）</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--accent)">交割</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--text2)">SCFI低位<br>关注翘尾信号</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--red)"><strong>做空10</strong><br>建仓>1161即安全<br>留20%仓位余地</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+          </div>
+
+          <div class="tl-row" style="min-height:4px;border-bottom:1px solid var(--border)"></div>
+
+          <!-- 12合约 -->
+          <div class="tl-row">
+            <div class="tl-row-label" style="color:#fff">EC12</div>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell tl-seg-wait">远月预期</span>
+            <span class="tl-cell" style="background:rgba(243,156,18,0.15);color:var(--orange);font-size:10px">近月过渡</span>
+            <span class="tl-cell" style="background:rgba(77,166,255,0.15);color:var(--accent);font-size:10px">交割准备<br>P₁窗口</span>
+            <span class="tl-cell" style="background:rgba(231,76,60,0.2);color:var(--red);font-size:10px">⭐ 交割博弈<br>做空</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--orange)">趋势</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-do-more" style="font-size:10px"><span class="gr">做多</span><br>（长协启动）</span>
+            <span class="tl-cell tl-seg-do-more" style="font-size:10px"><span class="gr">做多</span><br>（持有）</span>
+            <span class="tl-cell tl-seg-do-more" style="font-size:10px"><span class="gr">做多</span><br>（年末+抢运）</span>
+          </div>
+          <div class="tl-row">
+            <div class="tl-row-label" style="font-size:10px;color:var(--accent)">交割</div>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span><span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell tl-seg-wait">—</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--text2)">SCFI企稳<br>关注方向</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--accent)">P₁低位确认<br>盘面>1614</span>
+            <span class="tl-cell" style="font-size:9px;color:var(--red)"><strong>做空12</strong><br>建仓>1614即安全</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 图例 -->
+      <div class="tl-legend">
+        <span><span class="tl-dot" style="background:rgba(46,204,113,0.35)"></span> 交割博弈-做多</span>
+        <span><span class="tl-dot" style="background:rgba(231,76,60,0.35)"></span> 交割博弈-做空</span>
+        <span><span class="tl-dot" style="background:rgba(77,166,255,0.3)"></span> 交割准备（P₁窗口）</span>
+        <span><span class="tl-dot" style="background:rgba(243,156,18,0.35)"></span> 近月过渡（SCFI信号）</span>
+        <span><span class="tl-dot" style="background:rgba(139,143,163,0.25)"></span> 远月预期（不做交割）</span>
+        <span><span class="tl-dot" style="background:rgba(46,204,113,0.2)"></span> 趋势做多</span>
+        <span><span class="tl-dot" style="background:rgba(231,76,60,0.2)"></span> 趋势做空</span>
+        <span>⚠ 需等待回调</span>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <h3>三、两张策略的文字版总览</h3>
       <table>
         <tr><th>时间</th><th>季节</th><th>趋势跟踪操作</th><th>交割博弈操作</th><th>涉及合约</th></tr>
         <tr><td><strong>12月下~1月中</strong></td><td>春节前抢运</td><td><span class="gr">做多</span> 12/02</td><td>预判 02 P₁ 高位 → 做多方向</td><td>12、02</td></tr>
