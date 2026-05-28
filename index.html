@@ -508,10 +508,14 @@
     <h2>十、交割博弈完整操作指南</h2>
 
     <div class="card">
-      <h3>核心逻辑</h3>
-      <div class="info-box">
-        交割博弈的本质是：<strong>预判 (P₁+P₂+P₃)/3 的均值与当前期货盘面的偏离方向</strong>。<br>
-        不是赌 P₃ 的单日值，而是赌三周均值的走势方向。
+      <h3>核心逻辑：为什么趋势向下要做多，趋势向上要做空？</h3>
+      <div class="info-box" style="line-height:2">
+        <strong>交割博弈的本质：预判 (P₁+P₂+P₃)/3 的均值与当前期货盘面的偏离方向。</strong><br>
+        不是赌 P₃ 的单日值，而是赌三周均值的走势方向。<br><br>
+        <strong>关键机制（这是整个策略的基石）：</strong><br>
+        · P₁→P₃ <span class="tag tag-dn">下跌</span>：P₁/P₂ 在高位，即使 P₃ 跌了很多，前两周的高值也会把均值<strong>拉高</strong> → 结算 > P₃ → <span class="gr">做多</span><br>
+        · P₁→P₃ <span class="tag tag-up">上涨</span>：P₁/P₂ 在低位，即使 P₃ 涨了很多，前两周的低值也会把均值<strong>压低</strong> → 结算 < P₃ → <span class="rd">做空</span><br>
+        <strong>简记：P₁ 锁死了结算价的方向。P₁ 高=结算被拉高=做多；P₁ 低=结算被压低=做空。</strong>
       </div>
       <table>
         <tr><th>关键日期</th><th>事件</th><th>已知量</th><th>未知量</th><th>确定性</th></tr>
@@ -534,37 +538,45 @@
       <h3>阶段 B：P₁ 发布后 ~ P₂ 发布前（T-21 ~ T-14）⭐ 最佳建仓窗口</h3>
       <p style="font-size:13px;color:var(--text2);margin-bottom:8px">
         已知 P₁，未知 P₂/P₃。核心问题：<strong>P₂/P₃ 会比 P₁ 高还是低？</strong><br>
+        <strong style="color:var(--orange)">注意：P₁ 发布不是立刻动手的信号，而是"方向确认"的信号。</strong><br>
+        P₁ 发布后，盘面仍在交易 P₃ 预期（市场关注的是"最新现货价"），往往<strong>尚未充分反映 P₁ 对均值的拖累/抬升效应</strong>。<br>
+        此时趁盘面偏离结算价估值时建仓——这才是"P₁发布后介入"的真正含义。
       </p>
       <table>
-        <tr><th>判断信号</th><th>方向</th><th>交割策略</th><th>可靠性</th></tr>
+        <tr><th>判断信号</th><th>P₂/P₃ 方向</th><th>交割策略</th><th>为什么？</th><th>可靠性</th></tr>
         <tr>
           <td>SCFI 欧线周环比连续 > +3%</td>
           <td>P₂/P₃ ↑</td>
-          <td><span class="rd">做空进交割</span>（结算价会低于 P₃）</td>
+          <td><span class="rd">做空进交割</span></td>
+          <td>P₁ 低位→压低均值→结算 < P₃</td>
           <td><span class="tag tag-fx">高</span></td>
         </tr>
         <tr>
           <td>SCFI 欧线周环比连续 < −3%</td>
           <td>P₂/P₃ ↓</td>
-          <td><span class="gr">做多进交割</span>（结算价会高于 P₃）</td>
+          <td><span class="gr">做多进交割</span></td>
+          <td>P₁ 高位→拉高均值→结算 > P₃</td>
           <td><span class="tag tag-fx">高</span></td>
         </tr>
         <tr>
           <td>船司密集宣涨 GRI（综合费率附加费）</td>
           <td>P₂/P₃ ↑</td>
           <td>做空</td>
+          <td>P₁ 低位→均值被压低→结算 < P₃</td>
           <td><span class="tag tag-mu">中</span></td>
         </tr>
         <tr>
           <td>旺季备货（圣诞/春节前 6-8 周）</td>
           <td>P₂/P₃ ↑</td>
-          <td>做空（旺季拉升趋势下空头占优）</td>
+          <td>做空</td>
+          <td>P₁ 低位起步→旺季逐周拉升→均值追不上 P₃→结算 < P₃</td>
           <td><span class="tag tag-mu">中</span></td>
         </tr>
         <tr>
           <td>春节后货量真空期（2月合约）</td>
           <td>P₂/P₃ ↓</td>
-          <td>做多（节后暴跌趋势下多头占优）</td>
+          <td>做多</td>
+          <td>P₁ 节前高位→节后 P₃ 断崖→均值被 P₁ 拉高→结算 > P₃</td>
           <td><span class="tag tag-fx">极高</span></td>
         </tr>
       </table>
@@ -581,9 +593,9 @@
         <li><strong>已知 P₁、P₂，仅剩 P₃ 一个未知量</strong></li>
         <li>此时盘面价 ≈ 市场对 P₃ 的预期（历史偏差仅 ~1%）</li>
         <li><strong>若盘面价接近 (P₁+P₂+盘面价)/3 → 无套利空间，平仓离场</strong></li>
-        <li><strong>若盘面显著偏离估值（>2%）→ 存在套利窗口</strong></li>
-        <li>举例：P₁=1500, P₂=1600, 盘面=1700 → 结算≈1600 → 盘面高估 → 做空进交割</li>
-        <li>举例：P₁=2000, P₂=1800, 盘面=1700 → 结算≈1833 → 盘面低估 → 做多进交割</li>
+        <li><strong>若盘面显著偏离估值（>2%）→ 存在套利窗口。举例：</strong></li>
+        <li>P₁=1500, P₂=1600, 盘面=1700 → 预估结算=(1500+1600+1700)/3=<strong>1600</strong> → 盘面比结算高 100 点 → <span class="rd">做空</span>（P₁/P₂ 低→压低均值→结算 < 盘面）</li>
+        <li>P₁=2000, P₂=1800, 盘面=1700 → 预估结算=(2000+1800+1700)/3=<strong>1833</strong> → 盘面比结算低 133 点 → <span class="gr">做多</span>（P₁/P₂ 高→拉高均值→结算 > 盘面）</li>
         <li>此时 SCFI 可以精确预判下一期 SCFIS（领先 1-2 周），P₃ 的预测误差大幅缩小</li>
       </ul>
     </div>
@@ -695,36 +707,41 @@
     <div class="card">
       <h3>SCFI 预判 SCFIS 的实操应用</h3>
       <table>
-        <tr><th>场景</th><th>SCFI 信号</th><th>对 SCFIS 的预判</th><th>交割博弈含义</th></tr>
+        <tr><th>场景</th><th>SCFI 信号</th><th>对 SCFIS 的预判</th><th>交割博弈含义</th><th>为什么？</th></tr>
         <tr>
           <td>船司密集宣涨 GRI</td>
           <td>SCFI 周环比 +5~15%</td>
           <td>2-3 周后 SCFIS 将跟进上涨</td>
-          <td>若 P₁ 发布前已宣涨 → P₂/P₃ 大概率比 P₁ 高 → <span class="rd">做空</span></td>
+          <td><span class="rd">做空</span></td>
+          <td>P₂/P₃ 比 P₁ 高 → P₁ 低位压低均值 → 结算 < P₃</td>
         </tr>
         <tr>
           <td>船司降价揽货</td>
           <td>SCFI 周环比 −3~10%</td>
           <td>2-3 周后 SCFIS 将跟进下跌</td>
-          <td>若持续降价 → P₂/P₃ 大概率比 P₁ 低 → <span class="gr">做多</span></td>
+          <td><span class="gr">做多</span></td>
+          <td>P₂/P₃ 比 P₁ 低 → P₁ 高位拉高均值 → 结算 > P₃</td>
         </tr>
         <tr>
           <td>旺季货量激增</td>
           <td>SCFI 连续 3 周上涨</td>
           <td>SCFIS 将滞后兑现涨幅</td>
-          <td>P₁→P₃ 上涨趋势确认 → 做空进交割</td>
+          <td>做空进交割</td>
+          <td>P₁→P₃ 上涨 → 均值追不上 P₃ → 结算 < P₃</td>
         </tr>
         <tr>
           <td>春节前抢运尾声</td>
           <td>SCFI 高位拐头向下</td>
           <td>SCFIS 将在春节后暴跌</td>
-          <td>P₁ 还在高位，P₃ 将断崖 → 做多进交割</td>
+          <td>做多进交割</td>
+          <td>P₁ 节前高位 + P₃ 节后断崖 → P₁ 拉高均值 → 结算 > P₃</td>
         </tr>
         <tr>
           <td>节后货量真空</td>
           <td>SCFI 低位企稳</td>
           <td>SCFIS 滞后见底</td>
-          <td>P₁/P₂ 低位，P₃ 可能小幅反弹 → 方向不明，不宜博弈</td>
+          <td>方向不明，不宜博弈</td>
+          <td>P₁/P₂ 已在低位，P₃ 方向不确定</td>
         </tr>
       </table>
     </div>
@@ -808,7 +825,7 @@
           <td>8 个（57%）</td>
           <td>EC2408/2502/2506/2508/2512/2602/2604</td>
           <td>P₁→P₂→P₃ 方向一致，单边运行</td>
-          <td>P₁ 方向确认后顺势介入</td>
+          <td>P₁ 确认结算价方向后建仓（P₁ 高→做多，P₁ 低→做空）</td>
         </tr>
         <tr>
           <td><strong>V 型反转</strong></td>
@@ -990,14 +1007,16 @@
 
       <h3 style="margin-top:0">策略 A：季节性日历套利</h3>
       <p style="font-size:13px;color:var(--text2);margin-bottom:8px">
-        P₁ 发布后（倒数第3个周一），根据合约月份直接判断方向，不需等待更多信息。
+        P₁ 发布（倒数第3个周一 15:05）后，即可根据合约月份判断方向。<br>
+        <strong style="color:var(--orange)">注意：方向确认 ≠ 立刻动手。</strong>P₁ 发布后，趁盘面仍在交易 P₃ 预期、尚未充分反映 P₁ 对均值的拉抬/压低效应时建仓。<br>
+        以 06 合约为例：P₁=1697（低位）确认后，知道结算价天花板已被锁死，但盘面可能还在 2000+ 交易旺季叙事 → 此时做空。
       </p>
       <table>
-        <tr><th>合约</th><th>P₁发布后操作</th><th>加仓信号</th><th>平仓时机</th></tr>
-        <tr><td>02</td><td>做多（P₁高位是确定性的）</td><td>SCFI连续下跌</td><td>P₂发布后确认方向，持有至最后交易日</td></tr>
-        <tr><td>06</td><td>做空（旺季涨价是确定性的）</td><td>SCFI连续3周上涨</td><td>P₃当天15:00前平仓或进入交割</td></tr>
-        <tr><td>08</td><td>做多（旺季转淡是确定性的）</td><td>SCFI拐头向下</td><td>P₂确认见顶，持有至交割</td></tr>
-        <tr><td>12</td><td>做空（年末翘尾是确定性的）</td><td>SCFI连续上涨</td><td>波幅较温和，可提前止盈</td></tr>
+        <tr><th>合约</th><th>方向判断</th><th>为什么这个方向？</th><th>加仓信号</th><th>平仓时机</th></tr>
+        <tr><td>02</td><td><span class="gr">做多进交割</span></td><td>P₁ 节前高位 → 拉高均值 → 结算 > P₃</td><td>SCFI连续下跌</td><td>P₂发布后确认方向，持有至最后交易日</td></tr>
+        <tr><td>06</td><td><span class="rd">做空进交割</span></td><td>P₁ 旺季低位 → 压低均值 → 结算 < P₃</td><td>SCFI连续3周上涨</td><td>P₃当天15:00前平仓或进入交割</td></tr>
+        <tr><td>08</td><td><span class="gr">做多进交割</span></td><td>P₁ 旺季巅峰 → 拉高均值 → 结算 > P₃</td><td>SCFI拐头向下</td><td>P₂确认见顶，持有至交割</td></tr>
+        <tr><td>12</td><td><span class="rd">做空进交割</span></td><td>P₁ 年末低位 → 压低均值 → 结算 < P₃</td><td>SCFI连续上涨</td><td>波幅较温和，可提前止盈</td></tr>
       </table>
 
       <h3>策略 B：SCFI 领先指标套利</h3>
@@ -1155,12 +1174,12 @@
         <strong>一句话逻辑：</strong>季节性定方向，SCFI 定时机，均值公式定空间，仓位管理保生存。<br><br>
         <strong>决策时间线：</strong><br>
         T-28~T-21：观察 SCFI，不做交易<br>
-        <strong>T-21（P₁发布）：确认方向，轻仓建仓</strong><br>
-        T-14（P₂发布）：验证方向，调整仓位 → <strong>确定性最高的加仓点</strong><br>
+        <strong>T-21（P₁发布）：P₁ 确认结算价方向，趁盘面未充分消化时轻仓建仓</strong>（不是 P₁ 一出就动手，而是 P₁ 给了你方向，找盘面偏离时入场）<br>
+        T-14（P₂发布）：验证方向，调整仓位 → <strong>确定性最高的加仓点</strong>（此时仅剩 P₃ 一个未知量）<br>
         T-0（最后交易日）：验证判断，决定平仓或进入交割<br><br>
         <strong>核心公式：</strong><br>
         <span style="color:var(--accent)">预估结算价 = (P₁ + P₂ + SCFI推算P₃) / 3</span><br>
-        <span style="color:var(--accent)">交易信号 = 盘面价 − 预估结算价</span>
+        <span style="color:var(--accent)">偏差 = 盘面价 − 预估结算价</span> → 偏差 > 0（盘面高估）→ <span class="rd">做空</span>；偏差 < 0（盘面低估）→ <span class="gr">做多</span>
       </div>
     </div>
   </div>
