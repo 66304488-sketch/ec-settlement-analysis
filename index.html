@@ -832,14 +832,14 @@
           <td>3 个（21%）</td>
           <td>EC2412/2504</td>
           <td>P₂ 回调后 P₃ 反向大幅修正</td>
-          <td>P₂ 后反向布局，确定性高</td>
+          <td>P₂ 后反向布局：P₂跌→P₃大概率反弹→<span class="rd">做空</span>；P₂涨→P₃大概率回落→<span class="gr">做多</span></td>
         </tr>
         <tr>
           <td><strong>翘尾突变</strong></td>
           <td>3 个（21%）</td>
           <td>EC2506/2510/2605</td>
           <td>P₁/P₂ 平稳，P₃ 突然涨 9~15%</td>
-          <td>需 SCFI 提前捕捉信号</td>
+          <td>方向=P₁低/P₃拉升→<span class="rd">做空</span>，仓位减半；需SCFI提前捕捉翘尾信号</td>
         </tr>
       </table>
     </div>
@@ -1062,7 +1062,7 @@
         <tr><td>②</td><td>看盘面价 ≈ 市场共识的 P₃</td><td>盘面在交易什么 P₃ 水平？</td></tr>
         <tr><td>③</td><td>用自己的 SCFI 模型修正 P₃ 预期</td><td>市场共识对还是错？</td></tr>
         <tr><td>④</td><td>计算预估结算价 vs 盘面价</td><td>偏差方向？幅度？</td></tr>
-        <tr><td>⑤</td><td>决策</td><td>偏差 <2%→平仓；偏差 2-5%→轻仓；偏差 >5%→重仓</td></tr>
+        <tr><td>⑤</td><td>决策</td><td>盘面>预估结算→<span class="rd">做空</span>；盘面<预估结算→<span class="gr">做多</span>。偏差 <2%→平仓；偏差 2-5%→轻仓；偏差 >5%→重仓</td></tr>
       </table>
       <div class="notice" style="margin-top:12px">
         <strong>历史参考：</strong>EC2510 最后一天盘面 1130.9，市场共识 P₃≈1130，但实际 P₃=1312.71（+15.1%）。若判断到翘尾可能（节前抢运+SCFI 反弹），做空获利空间极大。EC2502 同理，节后断崖被低估，做多获利空间极大。
@@ -1174,7 +1174,7 @@
         <strong>一句话逻辑：</strong>季节性定方向，SCFI 定时机，均值公式定空间，仓位管理保生存。<br><br>
         <strong>决策时间线：</strong><br>
         T-28~T-21：观察 SCFI，不做交易<br>
-        <strong>T-21（P₁发布）：P₁ 确认结算价方向，趁盘面未充分消化时轻仓建仓</strong>（不是 P₁ 一出就动手，而是 P₁ 给了你方向，找盘面偏离时入场）<br>
+        <strong>T-21（P₁发布）：P₁ 确认结算价方向——P₁高位→<span class="gr">做多</span>，P₁低位→<span class="rd">做空</span>。趁盘面未充分消化时轻仓建仓</strong>（不是 P₁ 一出就动手，而是 P₁ 给了你方向，找盘面偏离时入场）<br>
         T-14（P₂发布）：验证方向，调整仓位 → <strong>确定性最高的加仓点</strong>（此时仅剩 P₃ 一个未知量）<br>
         T-0（最后交易日）：验证判断，决定平仓或进入交割<br><br>
         <strong>核心公式：</strong><br>
@@ -1591,7 +1591,7 @@
           <span class="rule-num">2</span>
           <div>
             <strong>春节日期是全年最重要的锚点</strong><br>
-            <span style="color:var(--text2);font-size:13px">每年春节日期（1月底~2月中）往前推 4-6 周=抢运窗口，往后推 2-4 周=暴跌窗口。02 合约的 P₃ 总是落在暴跌窗口内，这是100%确定的结构性机会。</span>
+            <span style="color:var(--text2);font-size:13px">每年春节日期（1月底~2月中）往前推 4-6 周=抢运窗口，往后推 2-4 周=暴跌窗口。02 合约的 P₃ 总是落在暴跌窗口内 → P₁节前高位拉高结算价 → <span class="gr">做多 02</span>，这是100%确定的结构性机会。</span>
           </div>
         </li>
         <li>
@@ -1937,54 +1937,60 @@
     <div class="card">
       <h3>六、各合约提前建仓 vs P₁ 后建仓对比</h3>
       <table>
-        <tr><th>合约</th><th>提前建仓窗口</th><th>典型盘面水位</th><th>P₁ 实际值</th><th>P₁ 后盘面调整</th><th>提前 vs 等 P₁ 的价差</th></tr>
+        <tr><th>合约</th><th>操作方向</th><th>提前建仓窗口</th><th>典型盘面水位</th><th>P₁ 实际值</th><th>P₁ 后盘面调整</th><th>提前 vs 等 P₁ 的价差</th></tr>
         <tr>
           <td><strong>EC2502</strong></td>
+          <td><span class="gr">做多</span></td>
           <td>12月下旬</td>
           <td>盘面 ~2200（节前抢运高位）</td>
           <td>~2,100</td>
           <td>可能小幅回调至 ~2000</td>
-          <td>提前建仓多 100-200 点安全边际</td>
+          <td>提前做多入场价位更低，多 100-200 点安全边际</td>
         </tr>
         <tr>
           <td><strong>EC2506</strong></td>
+          <td><span class="rd">做空</span></td>
           <td>4月中旬</td>
           <td>盘面 ~2000（旺季预期）</td>
           <td>1,697</td>
           <td>可能回调至 ~1800</td>
-          <td>提前建仓多 200 点入场优势</td>
+          <td>提前做空入场价位更高，多 200 点入场优势</td>
         </tr>
         <tr>
           <td><strong>EC2508</strong></td>
+          <td><span class="gr">做多</span></td>
           <td>7月上旬</td>
           <td>盘面 ~2500（旺季高峰）</td>
           <td>~2,300</td>
           <td>可能回落至 ~2200</td>
-          <td>提前建仓多 300 点入场优势</td>
+          <td>提前做多入场价位更低，多 300 点入场优势</td>
         </tr>
         <tr>
           <td><strong>EC2510</strong></td>
+          <td><span class="rd">做空</span></td>
           <td>9月下旬</td>
           <td>盘面 ~1300（淡季低位）</td>
           <td>~1,100</td>
           <td>盘面可能反弹至 ~1200</td>
-          <td>提前建仓入场价位更优 ~100 点</td>
+          <td>提前做空入场价位更高，多 ~100 点入场优势</td>
         </tr>
         <tr>
           <td><strong>EC2512</strong></td>
+          <td><span class="rd">做空</span></td>
           <td>11月中旬</td>
           <td>盘面 ~1600（秋末低位）</td>
           <td>1,510</td>
           <td>盘面可能已升至 ~1700</td>
-          <td>提前建仓入场价位更优 ~100 点</td>
+          <td>提前做空入场价位更高，多 ~100 点入场优势</td>
         </tr>
         <tr>
           <td><strong>EC2602</strong></td>
+          <td><span class="gr">做多</span></td>
           <td>1月上旬</td>
           <td>盘面 ~2000（节前抢运）</td>
           <td>1,859</td>
           <td>可能回调至 ~1900</td>
-          <td>提前建仓多 100 点安全边际</td>
+          <td>提前做多入场价位更低，多 100 点安全边际</td>
         </tr>
       </table>
       <div class="notice" style="margin-top:16px">
@@ -2047,52 +2053,62 @@
         对于确定性最高的合约（02、06），可以采用"双底仓"策略：提前建仓 + P₁ 后加仓，两次入场。
       </p>
       <table>
-        <tr><th>合约</th><th>第一底仓时机</th><th>第一底仓仓位</th><th>第二加仓时机</th><th>第二加仓仓位</th><th>总仓位</th></tr>
+        <tr><th>合约</th><th>操作方向</th><th>为什么是这个方向？</th><th>第一底仓时机</th><th>第一底仓仓位</th><th>第二加仓时机</th><th>第二加仓仓位</th><th>总仓位</th></tr>
         <tr>
           <td><strong>02（节后暴跌）</strong></td>
+          <td><span class="gr">做多 02</span></td>
+          <td>P₁节前高位→拉高均值→结算>P₃</td>
           <td>12月下旬 SCFI 高位拐头</td>
-          <td>30%</td>
+          <td>30% 做多</td>
           <td>P₁ 发布确认高位</td>
-          <td>70%</td>
+          <td>70% 做多</td>
           <td>100%</td>
         </tr>
         <tr>
           <td><strong>06（旺季拉升）</strong></td>
+          <td><span class="rd">做空 06</span></td>
+          <td>P₁旺季低位→压低均值→结算<P₃</td>
           <td>4月中旬 SCFI 连续上涨确认</td>
-          <td>30%</td>
+          <td>30% 做空</td>
           <td>P₁ 发布确认低位</td>
-          <td>70%</td>
+          <td>70% 做空</td>
           <td>100%</td>
         </tr>
         <tr>
           <td><strong>08（旺季见顶）</strong></td>
+          <td><span class="gr">做多 08</span></td>
+          <td>P₁旺季巅峰→拉高均值→结算>P₃</td>
           <td>7月上旬 SCFI 涨幅收窄</td>
-          <td>25%</td>
+          <td>25% 做多</td>
           <td>P₁ 发布确认高位</td>
-          <td>75%</td>
+          <td>75% 做多</td>
           <td>100%</td>
         </tr>
         <tr>
           <td><strong>10（翘尾）</strong></td>
+          <td><span class="rd">做空 10</span></td>
+          <td>P₁淡季低位→压低均值→结算<P₃</td>
           <td>SCFI 低位+国庆前 2 周</td>
-          <td>20%</td>
+          <td>20% 做空</td>
           <td>P₁ 发布确认低位</td>
-          <td>60%</td>
+          <td>60% 做空</td>
           <td>80%（留 20% 应对翘尾幅度不确定）</td>
         </tr>
         <tr>
           <td><strong>12（年末）</strong></td>
+          <td><span class="rd">做空 12</span></td>
+          <td>P₁年末低位→压低均值→结算<P₃</td>
           <td>SCFI 企稳回升+长协季</td>
-          <td>25%</td>
+          <td>25% 做空</td>
           <td>P₁ 发布确认低位</td>
-          <td>65%</td>
+          <td>65% 做空</td>
           <td>90%</td>
         </tr>
       </table>
       <div class="info-box" style="margin-top:12px">
         <strong>"双底仓"策略的优势：</strong><br>
-        · 第一底仓：吃"市场尚未反应"的价差，但确定性中等 → 小仓位<br>
-        · 第二加仓：吃"方向确认后"的确定性，但空间可能收窄 → 大仓位<br>
+        · 第一底仓：吃"市场尚未反应"的价差，但确定性中等 → 小仓位（25-30%）<br>
+        · 第二加仓：吃"方向确认后"的确定性，P₁ 实值确认后加至满仓 → 大仓位（60-75%）<br>
         · 两者互补：如果提前建仓错了（方向判断失误），第一底仓小亏出局，第二加仓不触发 → 亏损可控<br>
         · 如果提前建仓对了：第一底仓 + 第二加仓 = 双重利润
       </div>
