@@ -411,8 +411,8 @@
         <li>
           <span class="rule-num">1</span>
           <div>
-            <strong>P₁→P₃ 趋势方向 = P₃→结算偏差方向（100% 命中率）</strong><br>
-            <span style="color:var(--text2);font-size:13px">P₁→P₃ 下跌 → P₃ < 结算价（多头占优）；P₁→P₃ 上涨 → P₃ > 结算价（空头占优）。14 个合约无一例外。</span>
+            <strong>P₁→P₃ 趋势方向 = P₃→结算偏差方向</strong><br>
+            <span style="color:var(--text2);font-size:13px">P₁→P₃ 下跌 → P₃ < 结算价（多头占优）；P₁→P₃ 上涨 → P₃ > 结算价（空头占优）。这是结算价公式 (P₁+P₂+P₃)/3 的<strong>数学必然</strong>，P₁ 作为均值的第一项天然决定了结算价相对于 P₃ 的方向，不是统计相关性。</span>
           </div>
         </li>
         <li>
@@ -525,8 +525,9 @@
         <tr><td><strong>淡季合约</strong></td><td>偏下限（~1.35）</td><td>大小柜跌幅趋同，换算比收窄</td></tr>
       </table>
       <div class="formula" style="font-size:14px;line-height:2;text-align:center;padding:20px">
-        <strong>精确换算公式：SCFIS(点) ≈ SCFI(USD/TEU) × 1.40 × 市场热度系数</strong><br>
-        市场热度系数：旺季 1.00~1.05 | 正常 1.00 | 淡季 0.95~1.00
+        <strong>经验换算公式：SCFIS(点) ≈ SCFI(USD/TEU) × 1.40 × 市场热度系数</strong><br>
+        市场热度系数：旺季 1.00~1.05 | 正常 1.00 | 淡季 0.95~1.00<br>
+        <span style="font-size:11px;color:var(--text2)">注意：此系数基于有限样本的经验估算，缺乏逐合约的公开 SCFI/SCFIS 配对数据验证，精度约 ±5%。实际使用时建议以 ±100 点作为安全边际。</span>
       </div>
     </div>
 
@@ -547,7 +548,7 @@
         <tr>
           <td>SCFI 三周从 1,200 → 1,500（+25%）</td>
           <td>P₃ ≈ 1,500 × 1.45 = <strong>~2,175 点</strong>，P₁→P₃ 方向确定</td>
-          <td>方向 100%，幅度 ±8%</td>
+          <td>方向确定，幅度 ±8%</td>
         </tr>
       </table>
       <div class="notice" style="margin-top:16px">
@@ -643,7 +644,7 @@
     </div>
 
     <div class="card">
-      <h3>二、两年数据验证：季节性规律 100% 命中</h3>
+      <h3>二、两年数据验证：季节性规律（基于2024-2026共2年数据）</h3>
       <table>
         <tr><th>季节模式</th><th>2024-2025 验证</th><th>2025-2026 验证</th><th>命中率</th></tr>
         <tr><td><strong>春节断崖</strong></td><td>EC2502：P₁→P₃ 下跌 19.8%</td><td>EC2602：P₁→P₃ 下跌 10.8%</td><td class="gr">2/2 ✓</td></tr>
@@ -651,7 +652,7 @@
         <tr><td><strong>旺季见顶回落</strong></td><td>EC2408：P₁→P₃ 下跌 9.5%</td><td>EC2508：P₁→P₃ 下跌 13.5%</td><td class="gr">2/2 ✓</td></tr>
         <tr><td><strong>国庆翘尾</strong></td><td>—（数据不足）</td><td>EC2510：P₁→P₃ 上涨 19.3%</td><td class="gr">1/1 ✓</td></tr>
         <tr><td><strong>年末拉升</strong></td><td>EC2412：P₁→P₃ 上涨 1.7%（V型）</td><td>EC2512：P₁→P₃ 上涨 15.4%</td><td class="gr">2/2 ✓</td></tr>
-        <tr><td colspan="3" style="text-align:center;color:var(--orange)"><strong>全部季节性规律 100% 命中，零例外</strong></td><td class="gr"><strong>9/9</strong></td></tr>
+        <tr><td colspan="3" style="text-align:center;color:var(--orange)"><strong>两年内全部季节性规律均验证通过（样本量有限，n=2年）</strong></td><td class="gr"><strong>9/9</strong></td></tr>
       </table>
     </div>
 
@@ -688,10 +689,10 @@
       </table>
       <div class="info-box" style="margin-top:12px">
         <strong>季节性预判 vs 实际 P₁ 的验证：</strong><br>
-        · 02 合约：每次春节都在 1 月底~2 月中 → P₁ 每次都对应抢运高峰后的位置 → 预判 100% 命中<br>
-        · 06 合约：旺季每年 4 月底启动 → P₁ 总是在旺季刚开始的低位 → 预判 100% 命中<br>
-        · 08 合约：旺季高峰出现在 7 月 → P₁ 对应旺季巅峰 → 预判 100% 命中<br>
-        <strong>季节性是交割方向预判的"锚"——它告诉你 P₁ 大概在什么位置，从而告诉你该做多还是做空。</strong>
+        · 02 合约：每次春节都在 1 月底~2 月中 → P₁ 每次都对应抢运高峰后的位置 → 预判均验证通过<br>
+        · 06 合约：旺季每年 4 月底启动 → P₁ 总是在旺季刚开始的低位 → 预判均验证通过<br>
+        · 08 合约：旺季高峰出现在 7 月 → P₁ 对应旺季巅峰 → 预判均验证通过<br>
+        <strong>季节性是交割方向预判的"锚"，但需注意样本仅覆盖 2024-2026 两年。极端年份（如红海事件）可能偏离历史规律。</strong>
       </div>
     </div>
 
@@ -739,7 +740,7 @@
     </div>
 
     <div class="card">
-      <h3>三种震荡模式（14个合约100%可归类）</h3>
+      <h3>三种震荡模式（14个合约均可归类）</h3>
       <table>
         <tr><th>模式</th><th>合约数</th><th>典型合约</th><th>特征</th><th>交割策略</th></tr>
         <tr>
@@ -816,7 +817,7 @@
           <span class="rule-num">3</span>
           <div>
             <strong>春节 02 合约是双向极端</strong><br>
-            <span style="color:var(--text2);font-size:13px">确定性最高（100% 单边跌），但幅度也最大（~15%），仓位必须减半。</span>
+            <span style="color:var(--text2);font-size:13px">确定性最高（单边跌方向确定），但幅度也最大（~15%），仓位必须减半。</span>
           </div>
         </li>
         <li>
@@ -960,8 +961,8 @@
       <h3>极端风险场景应对</h3>
       <table>
         <tr><th>场景</th><th>合约案例</th><th>特征</th><th>应对</th></tr>
-        <tr><td><strong>春节断崖</strong></td><td>EC2502, EC2602</td><td>P₁/P₂ 高位，P₃ 断崖跌</td><td><span class="gr">做多进交割（100%确定）</span>，仓位减半</td></tr>
-        <tr><td><strong>尾周翘尾</strong></td><td>EC2510, EC2506</td><td>P₁/P₂ 平稳，P₃ 涨 10%+</td><td><span class="rd">做空进交割（100%确定）</span></td></tr>
+        <tr><td><strong>春节断崖</strong></td><td>EC2502, EC2602</td><td>P₁/P₂ 高位，P₃ 断崖跌</td><td><span class="gr">做多进交割（方向确定）</span>，仓位减半</td></tr>
+        <tr><td><strong>尾周翘尾</strong></td><td>EC2510, EC2506</td><td>P₁/P₂ 平稳，P₃ 涨 10%+</td><td><span class="rd">做空进交割（方向确定）</span></td></tr>
         <tr><td><strong>地缘突变</strong></td><td>EC2605</td><td>最后 2 周事件发酵</td><td>评估方向后跟进，仓位减半</td></tr>
         <tr><td><strong>旺季见顶</strong></td><td>EC2408</td><td>P₁ 巅峰→P₂ 松动→P₃ 回落</td><td><span class="gr">做多</span>，确定性高但幅度有限</td></tr>
       </table>
@@ -1000,7 +1001,7 @@
     <div class="card">
       <h3>为什么提前建仓？核心逻辑</h3>
       <p style="font-size:13px;color:var(--text2);line-height:2">
-        第八章证明了 SCFI 领先 SCFIS 1~3 周，第九章证明了季节性规律 100% 命中。<br>
+        第八章证明了 SCFI 领先 SCFIS 1~3 周，第九章验证了季节性规律（2024-2026）。<br>
         将两者结合：<strong>在 P₁ 发布前 3~6 周，你已经可以通过 SCFI + 季节性，预判 P₁ 的位置和 P₁→P₃ 的方向。</strong><br>
         这意味着你可以比市场早 3 周知道交割博弈的方向——提前建仓赚的就是这个"时间差"。
       </p>
@@ -1054,13 +1055,13 @@
         <tr>
           <td><strong>EC2502</strong></td>
           <td><span class="gr">做多</span></td>
-          <td class="hl">1,895</td>
+          <td class="hl">1,978</td>
           <td>2,000</td>
-          <td class="rd">−5,260</td>
+          <td class="rd">−1,100</td>
           <td>2,100</td>
-          <td class="rd">−10,260</td>
+          <td class="rd">−6,100</td>
           <td>1,996</td>
-          <td class="rd">−5,040</td>
+          <td class="rd">−900</td>
           <td><span class="tag tag-dn">需等待</span></td>
         </tr>
         <tr style="background:rgba(77,166,255,0.06)">
@@ -1153,8 +1154,8 @@
           <td>节后断崖暴跌</td>
           <td class="gr">高位</td>
           <td><span class="gr">做多</span></td>
-          <td><strong>节后盘面跌破 1,895 时</strong></td>
-          <td>建仓价 &lt; 1,895</td>
+          <td><strong>节后盘面跌破 1,978 时</strong></td>
+          <td>建仓价 &lt; 1,978</td>
           <td>等回调到位后 70-100%</td>
         </tr>
         <tr>
@@ -1246,7 +1247,7 @@
           <td><strong>EC2412</strong></td><td><span class="tag tag-up">↑ V型反弹</span></td><td>3,456.71</td><td>3,513.80</td><td class="hl">3,444.94</td><td>结算 < P₃</td><td class="gr">+2.00%</td><td><span class="rd">做空</span></td><td class="gr">✓</td>
         </tr>
         <tr>
-          <td><strong>EC2502</strong></td><td><span class="tag tag-dn">↓ 节后暴跌</span></td><td>~2,100</td><td>1,684.40</td><td class="hl">1,894.80</td><td>结算 > P₃</td><td class="rd">−11.10%</td><td><span class="gr">做多</span></td><td class="gr">✓</td>
+          <td><strong>EC2502</strong></td><td><span class="tag tag-dn">↓ 节后暴跌</span></td><td>~2,100</td><td>1,684.40</td><td class="hl">1,978.4</td><td>结算 > P₃</td><td class="rd">−14.86%</td><td><span class="gr">做多</span></td><td class="gr">✓</td>
         </tr>
         <tr>
           <td><strong>EC2504</strong></td><td><span class="tag tag-fx">→ 震荡</span></td><td>1,402.35</td><td>1,429.39</td><td class="hl">1,446.73</td><td>结算 > P₃</td><td class="rd">−1.20%</td><td>均衡</td><td class="gr">—</td>
@@ -1274,10 +1275,10 @@
         </tr>
       </table>
       <div class="info-box" style="margin-top:12px;background:rgba(46,204,113,0.08);border-color:rgba(46,204,113,0.3)">
-        <strong style="color:var(--green)">结论：方向定律 11/11 命中，100% 正确。</strong><br>
+        <strong style="color:var(--green)">结论：方向定律 11/11 命中。</strong><br>
         P₁→P₃ 下跌 → 结算 > P₃ → 做多（6个合约全部验证）<br>
         P₁→P₃ 上涨 → 结算 < P₃ → 做空（5个合约全部验证）<br>
-        这是数学必然，不是概率问题。P₁ 作为三周均值的第一个加数，天然决定了结算价相对于 P₃ 的方向。
+        <strong>这是数学必然，不是统计规律。</strong>结算价 = (P₁+P₂+P₃)/3，P₁ 作为三周均值的第一个加数，天然决定了结算价相对于 P₃ 的方向。14 个合约全部符合是结算价公式的必然结果，不代表未来不会出现例外（例外只能来自数据获取错误，不能来自公式失效）。
       </div>
     </div>
 
@@ -1503,11 +1504,11 @@
         <tr>
           <td><strong>02</strong></td>
           <td><span class="gr">做多</span></td>
-          <td class="hl">1,895</td>
-          <td>建仓价 &lt; 1,895</td>
+          <td class="hl">1,978</td>
+          <td>建仓价 &lt; 1,978</td>
           <td>1,900 ~ 2,200</td>
           <td class="rd">需等回调</td>
-          <td>节后暴跌开始后，等盘面跌破 1,895 再做多</td>
+          <td>节后暴跌开始后，等盘面跌破 1,978 再做多</td>
         </tr>
         <tr>
           <td><strong>04</strong></td>
@@ -1583,21 +1584,21 @@
           <td>12月下</td>
           <td>SCFI 高位拐头</td>
           <td>~2,200</td>
-          <td><1,895? 否</td>
+          <td><1,978? 否</td>
           <td>暂不动！虽然方向确定为做多，但盘面太高</td>
         </tr>
         <tr style="background:rgba(243,156,18,0.06)">
           <td>1月下</td>
           <td>春节临近，盘面开始下跌</td>
           <td>~2,000</td>
-          <td><1,895? 否</td>
+          <td><1,978? 否</td>
           <td><strong>继续等！盘面还没跌到位</strong></td>
         </tr>
         <tr style="background:rgba(46,204,113,0.06)">
           <td>2月上（节后）</td>
           <td>运价暴跌，盘面跟随跳水</td>
           <td>~1,850</td>
-          <td class="gr"><1,895 ✓</td>
+          <td class="gr"><1,978 ✓</td>
           <td><strong>做多建仓！盘面终于跌破结算价</strong></td>
         </tr>
         <tr>
@@ -1605,7 +1606,7 @@
           <td>最后交易日 P₃=1,684</td>
           <td>~1,996</td>
           <td>—</td>
-          <td>结算=1,895，做多盈利 ~2,250 元/手</td>
+          <td>结算=1,978，做多盈利 ~6,400 元/手</td>
         </tr>
       </table>
 
@@ -1894,7 +1895,7 @@
       <div class="info-box" style="margin-top:12px">
         <strong>回测结果：6 个合约趋势交易全部盈利。</strong><br>
         平均盈利约 <strong>15,200 元/手</strong>，显著高于交割博弈的 4,000-6,000 元/手。<br>
-        但注意：趋势交易的持仓周期（3-7 周）远长于交割博弈（3 周），且确定性低于交割博弈（趋势可能反转）。
+        但注意：趋势交易的持仓周期（3-7 周）远长于交割博弈（3 周），且确定性低于交割博弈（趋势可能反转）。以上盈亏均未扣除手续费（约 30-50 元/手）、滑点（交割期最后一周可能放大至 20-50 点）和资金成本（保证金约 12-15%，持仓数周的资金占用不可忽视）。
       </div>
     </div>
 
@@ -2004,7 +2005,7 @@
         </tr>
       </table>
       <div class="info-box" style="margin-top:12px">
-        核心风险：<strong>P₃ 方向与季节性预期相反。</strong>14 个合约中方向 100% 符合季节性预期，但地缘事件（EC2605）和翘尾突变（EC2510）的<strong>幅度</strong>可以非常大，单腿裸做的尾部风险不可忽视。
+        核心风险：<strong>P₃ 方向与季节性预期相反。</strong>14 个合约中方向均符合季节性预期，但地缘事件（EC2605）和翘尾突变（EC2510）的<strong>幅度</strong>可以非常大，单腿裸做的尾部风险不可忽视。
       </div>
     </div>
 
@@ -2189,7 +2190,7 @@
       <h3>框架 B：交割博弈策略</h3>
       <table>
         <tr><th>合约</th><th>方向</th><th>结算价</th><th>安全建仓区</th><th>最佳入场时机</th><th>预期盈亏/手</th><th>注意事项</th></tr>
-        <tr><td><strong>02</strong></td><td><span class="gr">做多</span></td><td>~1,895</td><td>建仓价 &lt; 1,895</td><td>节后盘面跌破结算线后</td><td class="gr">+2,000~5,000</td><td>必须等回调！P₁时入场会亏损</td></tr>
+        <tr><td><strong>02</strong></td><td><span class="gr">做多</span></td><td>~1,978</td><td>建仓价 &lt; 1,978</td><td>节后盘面跌破结算线后</td><td class="gr">+2,000~6,000</td><td>必须等回调！P₁时入场会亏损</td></tr>
         <tr><td><strong>06</strong></td><td><span class="rd">做空</span></td><td>~1,919</td><td>建仓价 &gt; 1,919</td><td>P₁ 发布后立即</td><td class="gr">+4,000~8,000</td><td>盘面天然在安全区内</td></tr>
         <tr><td><strong>08</strong></td><td><span class="gr">做多</span></td><td>~2,135</td><td>建仓价 &lt; 2,135</td><td>旺季回落后盘面跌破结算线</td><td class="gr">+3,000~7,000</td><td>必须等回调！</td></tr>
         <tr><td><strong>10</strong></td><td><span class="rd">做空</span></td><td>~1,161</td><td>建仓价 &gt; 1,161</td><td>P₁ 发布后</td><td class="gr">+4,000~8,000</td><td>翘尾幅度不确定，留 20% 仓位余地</td></tr>
@@ -2203,7 +2204,7 @@
         <tr><th>#</th><th>风险</th><th>严重度</th><th>影响策略</th><th>规避方法</th></tr>
         <tr><td>1</td><td><strong>P₃ 尾周突变（±10%+）</strong></td><td class="rd">致命</td><td>交割博弈</td><td>SCFI 提前监测翘尾/断崖信号，极端月份减半仓</td></tr>
         <tr><td>2</td><td><strong>趋势中途反转</strong></td><td class="rd">致命</td><td>趋势跟踪</td><td>严格止损，SCFI 周环比反转 >5% 立即减仓</td></tr>
-        <tr><td>3</td><td><strong>地缘事件（红海/关税）</strong></td><td class="rd">致命</td><td>两者</td><td>无法预测，发生时立即评估方向是否改变</td></tr>
+        <tr><td>3</td><td><strong>地缘事件（红海/关税）</strong></td><td class="rd">致命</td><td>两者</td><td>无法预测。预案：(1) 事件发酵期立即减仓至 30% 以下；(2) 两周内 SCFI 方向未实质改变则恢复仓位；(3) 若 SCFI 方向逆转则反向操作</td></tr>
         <tr><td>4</td><td><strong>02 合约极端波动（15-20%）</strong></td><td class="or">严重</td><td>两者</td><td>02 合约仓位不超过半仓</td></tr>
         <tr><td>5</td><td><strong>交割期流动性枯竭</strong></td><td class="or">严重</td><td>交割博弈</td><td>最迟 P₂ 发布后完成建仓，避免最后一周大单</td></tr>
         <tr><td>6</td><td><strong>做多合约在安全区外建仓</strong></td><td class="or">严重</td><td>交割博弈</td><td>严格遵守建仓价安全区间，不到不建仓</td></tr>
@@ -2221,7 +2222,7 @@
         <tr><td><strong>做什么</strong></td><td>跟随 SCFI 季节性方向做趋势交易</td><td>利用结算价=(P₁+P₂+P₃)/3 做价差套利</td></tr>
         <tr><td><strong>什么时候做</strong></td><td>季节性转折点（全年 6 次）</td><td>P₁ 发布后 3 周窗口（每年 6 次）</td></tr>
         <tr><td><strong>做多久</strong></td><td>3-7 周</td><td>1-3 周</td></tr>
-        <tr><td><strong>确定性</strong></td><td>中等（季节性+SCFI信号）</td><td>高（方向定律 100% 命中）</td></tr>
+        <tr><td><strong>确定性</strong></td><td>中等（季节性+SCFI信号）</td><td>高（方向定律，数学必然）</td></tr>
         <tr><td><strong>风险</strong></td><td>趋势反转、盘面波动</td><td>P₃ 尾周突变、流动性枯竭</td></tr>
         <tr><td><strong>平均收益</strong></td><td>~15,000 元/手</td><td>~5,000 元/手</td></tr>
       </table>
@@ -2231,7 +2232,7 @@
       <div class="card">
         <h3 style="color:var(--green)">趋势跟踪的确定性场景</h3>
         <ul style="font-size:13px;color:var(--text2);padding-left:18px;line-height:2">
-          <li><strong>季节性规律 100% 命中</strong>：两年 9 个季节波段全部验证</li>
+          <li><strong>季节性规律已验证</strong>：2024-2026 两年 9 个季节波段全部符合（样本有限，极端年份可能偏离）</li>
           <li><strong>SCFI 方向信号清晰</strong>：周环比连续 2 周确认，假突破概率低</li>
           <li><strong>02 做空（春节断崖）确定性最高</strong>：时间+方向+幅度三重确认</li>
           <li><strong>盈亏空间大</strong>：趋势交易单笔盈利是交割博弈的 2-3 倍</li>
@@ -2255,7 +2256,7 @@
         <h3 style="color:var(--green)">交割博弈的确定性场景</h3>
         <ul style="font-size:13px;color:var(--text2);padding-left:18px;line-height:2">
           <li><strong>盘面对 P₃ 定价极准</strong>：平均偏差 < 1%，最后交易日盘面是 P₃ 的极佳代理变量</li>
-          <li><strong>P₁→P₃ 方向 = 获利方方向</strong>：11/11 命中，100% 准确</li>
+          <li><strong>P₁→P₃ 方向 = 获利方方向</strong>：11/11 命中（数学必然，由结算价公式决定）</li>
           <li><strong>P₁ 发布后方向锁定</strong>：只剩 P₂/P₃ 两个未知量</li>
           <li><strong>做空合约天然在安全区</strong>：P₁ 发布后可直接建仓</li>
           <li><strong>SCFI 可提前预判 P₁ 方向</strong>：领先 3 周，换算精度 ±5%</li>
@@ -2604,7 +2605,7 @@
       <table>
         <tr><th>时间</th><th>季节</th><th>趋势跟踪操作</th><th>交割博弈操作</th><th>涉及合约</th></tr>
         <tr><td><strong>12月下~1月中</strong></td><td>春节前抢运</td><td><span class="gr">做多</span> 12/02</td><td>预判 02 P₁ 高位 → 做多方向</td><td>12、02</td></tr>
-        <tr><td><strong>1月底~2月底</strong></td><td>春节断崖</td><td><span class="rd">做空</span> 02</td><td>等盘面跌破 1,895 → <span class="gr">做多 02</span></td><td>02</td></tr>
+        <tr><td><strong>1月底~2月底</strong></td><td>春节断崖</td><td><span class="rd">做空</span> 02</td><td>等盘面跌破 1,978 → <span class="gr">做多 02</span></td><td>02</td></tr>
         <tr><td><strong>3月~4月中</strong></td><td>淡季磨底</td><td>观望</td><td>04 方向不明，轻仓/不做</td><td>04</td></tr>
         <tr><td><strong>4月底~6月</strong></td><td>旺季爬坡</td><td><span class="gr">做多</span> 06</td><td>P₁ 低位确认 → <span class="rd">做空 06</span></td><td>06</td></tr>
         <tr><td><strong>7月底~8月</strong></td><td>旺季见顶</td><td><span class="rd">做空</span> 08</td><td>等盘面跌破 2,135 → <span class="gr">做多 08</span></td><td>08</td></tr>
@@ -2618,7 +2619,7 @@
       1. EC 期货存在<strong>两种独立的盈利框架</strong>：趋势跟踪（跟随 SCFI 季节性方向）和交割博弈（利用结算价公式套利）。<br>
       2. 两者<strong>方向可以相反、时间窗口不同、盈亏来源不同</strong>——都是对的，只是在不同时间做不同的事。<br>
       3. <strong>趋势跟踪盈利空间更大</strong>（平均 ~15,000 vs ~5,000 元/手），但<strong>确定性更低</strong>（趋势可能反转）。<br>
-      4. <strong>交割博弈确定性极高</strong>（方向定律 100% 命中），但<strong>盈利空间有限</strong>且做多合约需要等待回调。<br>
+      4. <strong>交割博弈确定性极高</strong>（方向定律由结算价公式数学决定），但<strong>盈利空间有限</strong>且做多合约需要等待回调。<br>
       5. <strong>最佳实践：</strong>在季节性转折点做趋势跟踪 → 进入 P₁ 窗口后切换为交割博弈 → 两条路径无缝衔接。
     </div>
 
