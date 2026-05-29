@@ -15,9 +15,17 @@ from build_sections import (
     sec_18_investment, sec_19_insights
 )
 
-# 读取当前index.html
-with open('/Users/linyixin/Desktop/jinhua/ec跟踪分析/index.html', 'r', encoding='utf-8') as f:
-    lines = f.readlines()
+import subprocess
+
+# 从git读取与行号匹配的原始index.html（commit 8467581：首次19章重构版本）
+result = subprocess.run(
+    ['git', '-C', '/Users/linyixin/Desktop/jinhua/ec跟踪分析', 'show', '8467581:index.html'],
+    capture_output=True, text=True
+)
+if result.returncode != 0:
+    print("ERROR: 无法从git读取原始index.html")
+    sys.exit(1)
+lines = result.stdout.splitlines(keepends=True)
 
 print(f"读取 index.html: {len(lines)} 行")
 
